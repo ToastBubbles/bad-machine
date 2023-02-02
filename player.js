@@ -1,6 +1,6 @@
 let { locations } = require("./locations");
 let player = {
-  location: locations.home,
+  location: locations[0],
   inventory: [],
 };
 

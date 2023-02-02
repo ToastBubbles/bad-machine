@@ -1,6 +1,17 @@
 const { player } = require("./player");
 const { items } = require("./items");
 const { commands } = require("./commands");
+
+const cardDirections = [
+  "north",
+  "northwest",
+  "west",
+  "southwest",
+  "south",
+  "southeast",
+  "east",
+  "northeast",
+];
 function printSpecial(type) {
   switch (type) {
     case "line-single":
@@ -28,10 +39,10 @@ function openPrompt(line = ": ") {
   readline.question(line, (input) => {
     let i = 0;
     let functionHolder = null;
-    let thisContainer = null;
+    let thisActionItem = null;
     let actionType = "";
     for (let cmd of commands) {
-      let iArr = input.split(" ");
+      let iArr = input.toLocaleLowerCase().split(" ");
       for (let word of iArr) {
         if (cmd.text.includes(word)) {
           i++;
@@ -44,19 +55,27 @@ function openPrompt(line = ": ") {
         for (let container of player.location.containers) {
           // console.log(container.names);
           if (container.names.includes(word)) {
-            //   console.log(thisContainer);
-            thisContainer = container;
-            actionType = "container";
+            //   console.log(thisActionItem);
+            thisActionItem = container;
+            // actionType = "container";
           }
+          if (container.names.includes(word)) {
+            //   console.log(thisActionItem);
+            thisActionItem = container;
+            // actionType = "travel";
+          }
+        }
+        if (cardDirections.includes(word)) {
+          thisActionItem = word;
         }
       }
     }
 
     if (i == 0) {
       console.log(`I don't know the command: ${input}`);
-    } else if (actionType == "container") {
-      //   console.log(thisContainer);
-      functionHolder(thisContainer);
+    } else if (thisActionItem != null) {
+      //   console.log(thisActionItem);
+      functionHolder(thisActionItem);
     } else {
       functionHolder();
     }
