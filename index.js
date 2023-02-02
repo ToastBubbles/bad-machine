@@ -46,7 +46,7 @@ function openPrompt(line = ": ") {
           if (container.names.includes(word)) {
             //   console.log(thisContainer);
             thisContainer = container;
-            actionType = "search";
+            actionType = "container";
           }
         }
       }
@@ -54,7 +54,7 @@ function openPrompt(line = ": ") {
 
     if (i == 0) {
       console.log(`I don't know the command: ${input}`);
-    } else if (actionType == "search") {
+    } else if (actionType == "container") {
       //   console.log(thisContainer);
       functionHolder(thisContainer);
     } else {
