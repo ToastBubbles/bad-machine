@@ -11,6 +11,11 @@ let commands = [
     type: "action",
     f: loot,
   },
+  {
+    text: ["go", "move", "travel"],
+    type: "action",
+    f: go,
+  },
 ];
 
 ////////////////////////////////////////////
@@ -28,6 +33,19 @@ function loot(container) {
   } else {
     console.log(`you found nothing`);
   }
+}
+
+function go(dirLoc) {
+  const directions = [
+    "north",
+    "northwest",
+    "west",
+    "southwest",
+    "south",
+    "southeast",
+    "east",
+    "northeast",
+  ];
 }
 
 exports.commands = commands;
