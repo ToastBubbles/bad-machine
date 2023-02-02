@@ -2,6 +2,7 @@ const locations = {
   home: {
     name: "your humble aboad",
     desc: "a large empty room with brown walls. There is a worn dresser in the corner and a rubbish bin by the door.",
+    coords: [0, 0],
     type: "indoor",
     atmos: "safe",
     containers: [
@@ -19,7 +20,8 @@ const locations = {
   },
   yard: {
     name: "your frontyard",
-    desc: "a scruffy, half-acre field encapsulated in a shaggy wooden fence, the grass is soft but slightly unkept. there is a cobble pathway from the front door to an openning in the fence which is guarded by a loose swinging gate and a small tin mailbox",
+    desc: "a scruffy, half-acre field encapsulated in a shaggy wooden fence, the grass is soft but slightly unkept. there is a cobble pathway from the front door to an openning in the fence to the east which is guarded by a loose swinging gate and a small tin mailbox.",
+    coords: [1, 0],
     type: "outdoor",
     atmos: "safe",
     containers: [
