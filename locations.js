@@ -4,14 +4,18 @@ const locations = {
     desc: "a large empty room with brown walls. There is a worn dresser in the corner and a rubbish bin by the door.",
     type: "indoor",
     atmos: "safe",
-    containers: {
-      dresser: {
+    containers: [
+      {
+        names: ["dresser", "wardrobe"],
+        desc: "a sturdy oak dresser carved with intricate trim depicting ships sailing the seas",
         items: [0, 1],
       },
-      trash: {
+      {
+        names: ["bin", "rubbish", "trash", "trashcan"],
+        desc: "a dusty pale with made from ancient wood that compare to dried out driftwood",
         items: [],
       },
-    },
+    ],
   },
 };
 

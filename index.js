@@ -1,8 +1,6 @@
-// import { locations } from "./locations";
-// import { player } from "./player";
-
-// let locations = require("./locations");
-let player = require("./player");
+const { player } = require("./player");
+const { items } = require("./items");
+const { commands } = require("./commands");
 function printSpecial(type) {
   switch (type) {
     case "line-single":
@@ -18,14 +16,6 @@ const readline = require("readline").createInterface({
   output: process.stdout,
 });
 
-let items = [
-  {
-    id: 0,
-    type: "food",
-    name: "cheese",
-    value: 5,
-  },
-];
 function start() {
   console.log(printSpecial("line-double"));
   console.log("~~     welcome to bad machine.    ~~");
@@ -34,18 +24,55 @@ function start() {
 function describeLocation(loc) {
   console.log("You are in " + loc.name + ".");
 }
+function openPrompt(line = ": ") {
+  readline.question(line, (input) => {
+    let i = 0;
+    let functionHolder = null;
+    let thisContainer = null;
+    let actionType = "";
+    for (let cmd of commands) {
+      let iArr = input.split(" ");
+      for (let word of iArr) {
+        if (cmd.text.includes(word)) {
+          i++;
+          if (cmd.type == "passive" || cmd.type == "action") {
+            functionHolder = cmd.f;
+          }
+
+          //cmd.f();
+        }
+        for (let container of player.location.containers) {
+          // console.log(container.names);
+          if (container.names.includes(word)) {
+            //   console.log(thisContainer);
+            thisContainer = container;
+            actionType = "search";
+          }
+        }
+      }
+    }
+
+    if (i == 0) {
+      console.log(`I don't know the command: ${input}`);
+    } else if (actionType == "search") {
+      //   console.log(thisContainer);
+      functionHolder(thisContainer);
+    } else {
+      functionHolder();
+    }
+    openPrompt();
+  });
+}
 
 function promptUser(q) {
-  //   const prompt = require("prompt-sync")();
-  //   const name = prompt(q);
   readline.question(q, (input) => {
-    // console.log(`Hey there ${name}!`);
     if (input.toUpperCase() === "Y") {
       console.log("Starting New Game...");
       setTimeout(() => {
         console.log(printSpecial("line-single"));
-        // console.log(player.player);
-        describeLocation(player.player.location);
+
+        describeLocation(player.location);
+        openPrompt();
       }, 700);
 
       //   readline.close();

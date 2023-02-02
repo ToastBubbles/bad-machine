@@ -1,6 +1,6 @@
-let locations = require("./locations");
+let { locations } = require("./locations");
 let player = {
-  location: locations.locations.home,
+  location: locations.home,
 };
 
 exports.player = player;
