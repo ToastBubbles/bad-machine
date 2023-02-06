@@ -10,7 +10,7 @@ const items = [
     id: 1,
     name: "napkin",
     value: 0,
-    type: "",
+    type: "other",
     desc: "",
   },
   {

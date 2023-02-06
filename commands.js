@@ -29,11 +29,33 @@ function loot(container) {
   } else {
     console.log(`you looted ${container.names[0]}`);
     if (container.items.length > 0) {
-      console.log(
-        `you found ${container.items.map((item) => {
-          return items.find((x) => x.id === item).name;
-        })}`
-      );
+      let mappedItems = container.items[0].map((item, index) => {
+        let mappedItem = items.find((x) => x.id === item);
+        mappedItem.quantity = container.items[index][1];
+        return mappedItem;
+      });
+      //   console.log(mappedItems);
+      for (let foundItem of mappedItems) {
+        let isAdded = false;
+        if (player.inventory.length > 0) {
+          player.inventory.forEach((ownedItem) => {
+            if (ownedItem.id == foundItem.id) {
+              ownedItem.quantity += foundItem.quantity;
+            } else {
+              player.inventory.push(foundItem);
+            }
+          });
+        } else {
+          player.inventory.push(foundItem);
+        }
+      }
+      console.log(player.inventory);
+
+      //   console.log(
+      //     `you found ${container.items.map((item) => {
+      //       return items.find((x) => x.id === item).name;
+      //     })}`
+      //   );
     } else {
       console.log(`you found nothing`);
     }

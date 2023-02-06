@@ -9,7 +9,10 @@ const locations = [
       {
         names: ["dresser", "wardrobe"],
         desc: "a sturdy oak dresser carved with intricate trim depicting little ships sailing the seas",
-        items: [0, 1],
+        items: [
+          [0, 1],
+          [1, 3],
+        ],
       },
       {
         names: ["bin", "rubbish", "trash", "trashcan", "pale"],
@@ -28,12 +31,12 @@ const locations = [
       {
         names: ["mail", "mailbox", "postbox"],
         desc: "a tin mailbox with a ribbed body and a rusty undercarrage",
-        items: [2],
+        items: [[2, 1]],
       },
       {
         names: ["rock"],
         desc: "a rock",
-        items: [3],
+        items: [[3, 1]],
       },
     ],
   },
