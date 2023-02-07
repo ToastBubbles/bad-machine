@@ -46,12 +46,22 @@ function openPrompt(line = ": ") {
       for (let word of iArr) {
         if (cmd.text.includes(word)) {
           i++;
-          if (cmd.type == "passive" || cmd.type == "action") {
+          if (
+            cmd.type == "passive" ||
+            cmd.type == "action" ||
+            cmd.type == "silly"
+          ) {
             functionHolder = cmd.f;
+          }
+          if (cmd.type === "silly") {
+            thisActionItem = word;
           }
 
           //cmd.f();
         }
+
+        // else
+        // {
         for (let container of player.location.containers) {
           // console.log(container.names);
           if (container.names.includes(word)) {
@@ -68,9 +78,10 @@ function openPrompt(line = ": ") {
         if (cardDirections.includes(word)) {
           thisActionItem = word;
         }
+        // }
       }
     }
-
+    // console.log(functionHolder);
     if (i == 0) {
       console.log(`I don't know the command: ${input}`);
     } else if (thisActionItem != null) {
@@ -96,6 +107,7 @@ function promptUser(q) {
 
       //   readline.close();
     } else {
+      openPrompt();
     }
   });
 }

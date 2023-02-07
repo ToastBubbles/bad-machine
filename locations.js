@@ -1,4 +1,4 @@
-const locations = [
+let locations = [
   {
     name: "your humble aboad",
     desc: "a large empty room with brown walls. There is a worn dresser in the corner and a rubbish bin by the door.",
@@ -10,7 +10,7 @@ const locations = [
         names: ["dresser", "wardrobe"],
         desc: "a sturdy oak dresser carved with intricate trim depicting little ships sailing the seas",
         items: [
-          [0, 1],
+          [0, 2],
           [1, 3],
         ],
       },
@@ -31,11 +31,14 @@ const locations = [
       {
         names: ["mail", "mailbox", "postbox"],
         desc: "a tin mailbox with a ribbed body and a rusty undercarrage",
-        items: [[2, 1]],
+        items: [
+          [2, 1],
+          [1, 12],
+        ],
       },
       {
         names: ["rock"],
-        desc: "a rock",
+        desc: "a suspicious looking rock",
         items: [[3, 1]],
       },
     ],
