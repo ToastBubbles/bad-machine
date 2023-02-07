@@ -32,6 +32,7 @@ let locations = [
         names: ["mail", "mailbox", "postbox"],
         desc: "a tin mailbox with a ribbed body and a rusty undercarrage",
         items: [
+          [0, 2],
           [2, 1],
           [1, 12],
         ],

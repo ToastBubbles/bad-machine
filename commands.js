@@ -102,6 +102,7 @@ function loot(container) {
 
         return mappedItem;
       });
+      //   console.log(mappedItems);
 
       mappedItems.forEach((foundItem) => {
         console.log(`you found ${foundItem.quantity} ${foundItem.name}`);
@@ -109,7 +110,7 @@ function loot(container) {
         if (player.inventory.length > 0) {
           //   console.log(player.inventory);
           player.inventory.forEach((ownedItem) => {
-            console.log(`you have ${ownedItem.quantity} ${ownedItem.name}`);
+            // console.log(`you have ${ownedItem.quantity} ${ownedItem.name}`);
             // console.log(ownedItem);
             if (ownedItem.id == foundItem.id) {
               //   console.log("===============");
