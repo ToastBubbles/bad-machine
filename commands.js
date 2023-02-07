@@ -28,7 +28,7 @@ let commands = [
     f: go,
   },
   {
-    text: ["inventory", "backpack"],
+    text: ["inventory", "backpack", "inv"],
     desc: "view inventory",
     type: "action",
     f: printInv,
@@ -112,7 +112,7 @@ function loot(container) {
           player.inventory.forEach((ownedItem) => {
             // console.log(`you have ${ownedItem.quantity} ${ownedItem.name}`);
             // console.log(ownedItem);
-            if (ownedItem.id == foundItem.id) {
+            if (ownedItem.id === foundItem.id) {
               //   console.log("===============");
               //   console.log(ownedItem);
               //   console.log("===============");
@@ -130,8 +130,8 @@ function loot(container) {
 
       container.looted = true;
     } else if (container.items.length == 1) {
-      let foundItem = items.find((x) => x.id === item[0]);
-      foundItem.quantity = item[1];
+      let foundItem = items.find((x) => x.id === container.items[0][0]);
+      foundItem.quantity = container.items[0][1];
 
       console.log(`you found ${foundItem.quantity} ${foundItem.name}`);
       let isAdded = false;
