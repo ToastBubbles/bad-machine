@@ -224,7 +224,7 @@ function go(dirLoc) {
         console.log(`you are in \x1b[94m${player.location.name}\x1b[0m`);
         if (nextLoc.atmos.type === "hazardous") {
           if (lastLoc.atmos.type === "safe") {
-            console.log("\x1b33myou do not feel safe here\x1b[0m");
+            console.log("\x1b[33myou do not feel safe here\x1b[0m");
             if (nextLoc.atmos.randEnemies) {
               diceRoll(99) && spawnEnemy();
             } else {
@@ -235,7 +235,7 @@ function go(dirLoc) {
           lastLoc.atmos.type === "hazardous" &&
           nextLoc.atmos.type === "safe"
         ) {
-          console.log("\x1b[0myou feel safe again\x1b[0m");
+          console.log("\x1b[92myou feel safe again\x1b[0m");
         }
       } else {
         console.log("\x1b[90myou can not travel this direction\x1b[0m");
