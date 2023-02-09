@@ -27,6 +27,14 @@ const items = [
     type: "food",
     desc: "",
   },
+  {
+    id: 4,
+    name: "shortsword",
+    value: 30,
+    type: "sword",
+    damage: 6,
+    desc: "",
+  },
 ];
 
 exports.items = items;

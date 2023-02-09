@@ -28,12 +28,14 @@ const readline = require("readline").createInterface({
 });
 
 function start() {
+  console.log("\x1b[33m");
   console.log(printSpecial("line-double"));
   console.log("~~     welcome to bad machine.    ~~");
   console.log(printSpecial("line-double"));
+  console.log("\x1b[0m");
 }
 function describeLocation(loc) {
-  console.log("You are in " + loc.name + ".");
+  console.log("You are in \x1b[94m" + loc.name + "\x1b[0m.");
 }
 function openPrompt(line = ": ") {
   readline.question(line, (input) => {
@@ -49,43 +51,45 @@ function openPrompt(line = ": ") {
           if (
             cmd.type == "passive" ||
             cmd.type == "action" ||
-            cmd.type == "silly"
+            cmd.type == "silly" ||
+            cmd.type == "attack"
           ) {
             functionHolder = cmd.f;
           }
           if (cmd.type === "silly") {
             thisActionItem = word;
+          } else if (cmd.type === "attack") {
+            if (player.engaged.length > 0) {
+              console.log(player.engaged[0][0]);
+              thisActionItem = player.engaged[0][0];
+            } else {
+              //check if player is targetting npc
+            }
           }
-
-          //cmd.f();
         }
 
-        // else
-        // {
         for (let container of player.location.containers) {
-          // console.log(container.names);
           if (container.names.includes(word)) {
-            //   console.log(thisActionItem);
             thisActionItem = container;
-            // actionType = "container";
           }
           if (container.names.includes(word)) {
-            //   console.log(thisActionItem);
             thisActionItem = container;
-            // actionType = "travel";
           }
         }
         if (cardDirections.includes(word)) {
           thisActionItem = word;
         }
-        // }
+        for (let item of player.inventory) {
+          let mapped = items.find((x) => x.id == item[0]);
+          if (mapped.name == word) {
+            thisActionItem = word;
+          }
+        }
       }
     }
-    // console.log(functionHolder);
     if (i == 0) {
       console.log(`I don't know the command: ${input}`);
     } else if (thisActionItem != null) {
-      //   console.log(thisActionItem);
       functionHolder(thisActionItem);
     } else {
       functionHolder();
@@ -112,4 +116,4 @@ function promptUser(q) {
   });
 }
 start();
-promptUser("New game? Y/N ");
+promptUser("\x1b[93mNew game? Y/N \x1b[0m");
