@@ -1,6 +1,7 @@
 const { player } = require("./player");
 const { items } = require("./items");
 const { commands } = require("./commands");
+const { ANSI } = require("./config");
 
 const cardDirections = [
   "north",
@@ -28,14 +29,14 @@ const readline = require("readline").createInterface({
 });
 
 function start() {
-  console.log("\x1b[33m");
+  console.log(`${ANSI.yellow}`);
   console.log(printSpecial("line-double"));
   console.log("~~     welcome to bad machine.    ~~");
   console.log(printSpecial("line-double"));
-  console.log("\x1b[0m");
+  console.log(`${ANSI.reset}`);
 }
 function describeLocation(loc) {
-  console.log("You are in \x1b[94m" + loc.name + "\x1b[0m.");
+  console.log(`You are in ${ANSI.ltblue}${loc.name}${ANSI.reset}.`);
 }
 function openPrompt(line = ": ") {
   readline.question(line, (input) => {
@@ -116,4 +117,4 @@ function promptUser(q) {
   });
 }
 start();
-promptUser("\x1b[93mNew game? Y/N \x1b[0m");
+promptUser(`${ANSI.ltyellow}New game? Y/N ${ANSI.reset}`);

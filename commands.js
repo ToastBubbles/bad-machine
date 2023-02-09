@@ -2,6 +2,7 @@ const { player } = require("./player");
 const { items } = require("./items");
 const { locations } = require("./locations");
 const { enemies } = require("./enemies");
+const { ANSI } = require("./config");
 // const { randomBytes } = require("crypto");
 
 let commands = [
@@ -88,7 +89,7 @@ function printInv() {
       let mappedItem = items.find((x) => x.id === item[0]);
 
       console.log(
-        `you have \x1b[33m${item[1]} \x1b[32m${mappedItem.name}\x1b[0m`
+        `you have ${ANSI.green}${item[1]} ${ANSI.green}${mappedItem.name}${ANSI.reset}`
       );
     }
   } else {
@@ -96,7 +97,7 @@ function printInv() {
       "you have a legendary beskar steel sword and 1,230,420 gold coins"
     );
     // setTimeout(() => {
-    console.log("\x1b[90mlol jk, u aint got shit\x1b[0m");
+    console.log(`${ANSI.ltgrey}lol jk, u aint got shit${ANSI.reset}`);
     // }, 1500);
   }
 }
@@ -107,15 +108,17 @@ function silly(action) {
 /////////////////////
 function loot(container) {
   if (!container) {
-    console.log("\x1b[90mspecify what you would like to search\x1b[0m");
+    console.log(
+      `${ANSI.ltgrey}specify what you would like to search${ANSI.reset}`
+    );
   } else if (!container.looted) {
-    console.log(`you looted \x1b[94m${container.names[0]}\x1b[0m`);
+    console.log(`you looted ${ANSI.ltblue}${container.names[0]}${ANSI.reset}`);
 
     if (container.items.length > 0) {
       container.items.forEach((foundItem) => {
         let mappedItem = items.find((x) => x.id === foundItem[0]);
         console.log(
-          `you found \x1b[32m${foundItem[1]} ${mappedItem.name}\x1b[0m`
+          `you found ${ANSI.green}${foundItem[1]} ${mappedItem.name}${ANSI.reset}`
         );
         let isAdded = false;
         if (player.inventory.length > 0) {
@@ -152,12 +155,12 @@ function loot(container) {
     //   container.looted = true;
     // }
     else {
-      console.log(`\x1b[90myou found nothing\x1b[0m`);
+      console.log(`${ANSI.ltgrey}you found nothing${ANSI.reset}`);
       container.looted = true;
     }
   } else {
     console.log(
-      `\x1b[90mthe \x1b[94m${container.names[0]}\x1b[90m has already been ransacked...\x1b[0m`
+      `${ANSI.ltgrey}the ${ANSI.ltblue}${container.names[0]}${ANSI.ltgrey} has already been ransacked...${ANSI.reset}`
     );
   }
 }
@@ -221,10 +224,12 @@ function go(dirLoc) {
         let lastLoc = player.location;
 
         player.location = nextLoc;
-        console.log(`you are in \x1b[94m${player.location.name}\x1b[0m`);
+        console.log(
+          `you are in ${ANSI.ltblue}${player.location.name}${ANSI.reset}`
+        );
         if (nextLoc.atmos.type === "hazardous") {
           if (lastLoc.atmos.type === "safe") {
-            console.log("\x1b[33myou do not feel safe here\x1b[0m");
+            console.log(`${ANSI.yellow}you do not feel safe here${ANSI.reset}`);
             if (nextLoc.atmos.randEnemies) {
               diceRoll(99) && spawnEnemy();
             } else {
@@ -235,16 +240,18 @@ function go(dirLoc) {
           lastLoc.atmos.type === "hazardous" &&
           nextLoc.atmos.type === "safe"
         ) {
-          console.log("\x1b[92myou feel safe again\x1b[0m");
+          console.log(`${ANSI.ltgreen}you feel safe again${ANSI.reset}`);
         }
       } else {
-        console.log("\x1b[90myou can not travel this direction\x1b[0m");
+        console.log(
+          `${ANSI.ltgrey}you can not travel this direction${ANSI.reset}`
+        );
       }
     } else {
-      console.log("\x1b[90mthat is not a valid direction\x1b[0m");
+      console.log(`${ANSI.ltgrey}that is not a valid direction${ANSI.reset}`);
     }
   } else {
-    console.log("\x1b[91myou cannot escape this enemy\x1b[0m");
+    console.log(`${ANSI.ltred}you cannot escape this enemy${ANSI.reset}`);
   }
 }
 function diceRoll(chance) {
@@ -274,9 +281,9 @@ function spawnEnemy() {
   // console.log(randIndex);
   player.engaged.push([potentialEnemies[randIndex].id, 1]);
   console.log(
-    `you have encountered a \x1b[31m${
+    `you have encountered a ${ANSI.red}${
       enemies.find((x) => x.id === player.engaged[0][0]).name
-    }\x1b[0m`
+    }${ANSI.reset}`
   );
   // player.location.level;
 }
@@ -289,13 +296,15 @@ function equip(name = "") {
     // console.log(item);
     if (item.type == "sword") {
       player.equippedWeapon = item.id;
-      console.log(`you equipped \x1b[32m${name}\x1b[0m`);
+      console.log(`you equipped ${ANSI.green}${name}${ANSI.reset}`);
       player.damage = item.damage;
     } else {
-      console.log(`you cannot equip \x1b[32m${name}\x1b[0m`);
+      console.log(`you cannot equip ${ANSI.green}${name}${ANSI.reset}`);
     }
   } else {
-    console.log("\x1b[90mplease specify what you would like to equip\x1b[0m");
+    console.log(
+      `${ANSI.ltgrey}please specify what you would like to equip${ANSI.reset}`
+    );
     // player.damage = 1;
   }
 }
@@ -304,16 +313,18 @@ let dealtDamage = 0;
 function attack(id) {
   if (id) {
     let curEnemy = enemies.find((x) => x.id === id);
-    console.log(`you attacked \x1b[31m${curEnemy.name}\x1b[0m`);
-    console.log(`you dealt \x1b[31m${player.damage}\x1b[0m damage`);
+    console.log(`you attacked ${ANSI.red}${curEnemy.name}${ANSI.reset}`);
+    console.log(`you dealt ${ANSI.red}${player.damage}${ANSI.reset} damage`);
     dealtDamage += player.damage;
     if (dealtDamage >= curEnemy.hp) {
-      console.log(`\x1b[92myou defeated the \x1b[31m${curEnemy.name}\x1b[0m`);
+      console.log(
+        `${ANSI.ltgreen}you defeated the ${ANSI.red}${curEnemy.name}${ANSI.reset}`
+      );
       player.engaged.pop();
       dealtDamage = 0;
     }
   } else {
-    console.log("\x1b[90mthere is nothing to attack\x1b[0m");
+    console.log(`${ANSI.ltgrey}there is nothing to attack${ANSI.reset}`);
   }
 }
 
