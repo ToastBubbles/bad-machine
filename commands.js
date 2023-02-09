@@ -72,7 +72,9 @@ function describeLoc(item = player.location) {
 function printInv() {
   if (player.inventory.length > 0) {
     for (let item of player.inventory) {
-      console.log(`you have ${item.quantity} ${item.name}`);
+      let mappedItem = items.find((x) => x.id === item[0]);
+
+      console.log(`you have ${item[1]} ${mappedItem.name}`);
     }
   } else {
     console.log(
@@ -89,35 +91,20 @@ function silly(action) {
 }
 /////////////////////
 function loot(container) {
-  //   console.log(player.inventory);
   if (!container) {
     console.log("specify what you would like to search");
   } else if (!container.looted) {
     console.log(`you looted ${container.names[0]}`);
 
     if (container.items.length > 1) {
-      let mappedItems = container.items.map((item) => {
-        let mappedItem = items.find((x) => x.id === item[0]);
-        mappedItem.quantity = item[1];
-
-        return mappedItem;
-      });
-      //   console.log(mappedItems);
-
-      mappedItems.forEach((foundItem) => {
-        console.log(`you found ${foundItem.quantity} ${foundItem.name}`);
+      container.items.forEach((foundItem) => {
+        let mappedItem = items.find((x) => x.id === foundItem[0]);
+        console.log(`you found ${foundItem[1]} ${mappedItem.name}`);
         let isAdded = false;
         if (player.inventory.length > 0) {
-          //   console.log(player.inventory);
           player.inventory.forEach((ownedItem) => {
-            // console.log(`you have ${ownedItem.quantity} ${ownedItem.name}`);
-            // console.log(ownedItem);
-            if (ownedItem.id === foundItem.id) {
-              //   console.log("===============");
-              //   console.log(ownedItem);
-              //   console.log("===============");
-              //   console.log(ownedItem.quantity);
-              ownedItem.quantity += foundItem.quantity;
+            if (ownedItem[0] === foundItem[0]) {
+              ownedItem[1] += foundItem[1];
               isAdded = true;
             }
           });
@@ -127,18 +114,15 @@ function loot(container) {
           isAdded = true;
         }
       });
-
       container.looted = true;
     } else if (container.items.length == 1) {
-      let foundItem = items.find((x) => x.id === container.items[0][0]);
-      foundItem.quantity = container.items[0][1];
-
+      let foundItem = container.items[0];
       console.log(`you found ${foundItem.quantity} ${foundItem.name}`);
       let isAdded = false;
       if (player.inventory.length > 0) {
         player.inventory.forEach((ownedItem) => {
-          if (ownedItem.id == foundItem.id) {
-            ownedItem.quantity += foundItem.quantity;
+          if (ownedItem[0] == foundItem[0]) {
+            ownedItem[1] += foundItem[1];
             isAdded = true;
           }
         });
@@ -154,8 +138,6 @@ function loot(container) {
   } else {
     console.log(`the ${container.names[0]} has already been ransacked...`);
   }
-  //   console.log("==========");
-  //   console.log(player.inventory);
 }
 
 function go(dirLoc) {
