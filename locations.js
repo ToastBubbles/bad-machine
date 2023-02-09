@@ -44,6 +44,22 @@ let locations = [
       },
     ],
   },
+  {
+    name: "a lovely meadow",
+    desc: "a wide open field of lush grash with a mix of lovely lilacs. You are standing on a winding cobble path that leads Northeast",
+    coords: [2, 0],
+    type: "outdoor",
+    atmos: "hazardous",
+    containers: [],
+  },
+  {
+    name: "a fork in the road",
+    desc: "a strudy oak sign splits the path in two. the sign has one arrow-shaped plank pointing North that states 'Invinhall' while another points Southeast with the enscription 'Drothyl'",
+    coords: [3, 1],
+    type: "outdoor",
+    atmos: "hazardous",
+    containers: [],
+  },
 ];
 
 exports.locations = locations;

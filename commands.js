@@ -65,7 +65,6 @@ function help() {
 }
 ////////////////////////////////////////////
 function describeLoc(item = player.location) {
-  //   console.log(item);
   console.log(item.desc);
 }
 ///////////////////
@@ -174,17 +173,22 @@ function go(dirLoc) {
       break;
   }
 
-  //   let nextLoc = locations.find((x) => x.coords === nextPos);
   let nextLoc = null;
   for (let location of locations) {
-    // console.log(location.coords, nextPos);
     if (location.coords[0] == nextPos[0] && location.coords[1] == nextPos[1]) {
       nextLoc = location;
     }
   }
   if (nextLoc != null) {
+    let lastLoc = player.location;
+
     player.location = nextLoc;
     console.log(`you are in ${player.location.name}`);
+    if (lastLoc.atmos === "safe" && nextLoc.atmos === "hazardous") {
+      console.log("you do not feel safe here");
+    } else if (lastLoc.atmos === "hazardous" && nextLoc.atmos === "safe") {
+      console.log("you feel safe again");
+    }
   } else {
     console.log("you can not travel this direction");
   }
