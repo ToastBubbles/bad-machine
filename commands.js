@@ -96,7 +96,7 @@ function loot(container) {
   } else if (!container.looted) {
     console.log(`you looted ${container.names[0]}`);
 
-    if (container.items.length > 1) {
+    if (container.items.length > 0) {
       container.items.forEach((foundItem) => {
         let mappedItem = items.find((x) => x.id === foundItem[0]);
         console.log(`you found ${foundItem[1]} ${mappedItem.name}`);
@@ -115,24 +115,26 @@ function loot(container) {
         }
       });
       container.looted = true;
-    } else if (container.items.length == 1) {
-      let foundItem = container.items[0];
-      let mappedItem = items.find((x) => x.id === foundItem[0]);
-      console.log(`you found ${foundItem[1]} ${mappedItem.name}`);
-      let isAdded = false;
-      if (player.inventory.length > 0) {
-        player.inventory.forEach((ownedItem) => {
-          if (ownedItem[0] == foundItem[0]) {
-            ownedItem[1] += foundItem[1];
-            isAdded = true;
-          }
-        });
-      }
-      if (!isAdded) {
-        player.inventory.push(foundItem);
-      }
-      container.looted = true;
-    } else {
+    }
+    // else if (container.items.length == 1) {
+    //   let foundItem = container.items[0];
+    //   let mappedItem = items.find((x) => x.id === foundItem[0]);
+    //   console.log(`you found ${foundItem[1]} ${mappedItem.name}`);
+    //   let isAdded = false;
+    //   if (player.inventory.length > 0) {
+    //     player.inventory.forEach((ownedItem) => {
+    //       if (ownedItem[0] == foundItem[0]) {
+    //         ownedItem[1] += foundItem[1];
+    //         isAdded = true;
+    //       }
+    //     });
+    //   }
+    //   if (!isAdded) {
+    //     player.inventory.push(foundItem);
+    //   }
+    //   container.looted = true;
+    // }
+    else {
       console.log(`you found nothing`);
       container.looted = true;
     }
