@@ -299,10 +299,22 @@ function equip(name = "") {
     // player.damage = 1;
   }
 }
-
+// let curEnemy = {};
+let dealtDamage = 0;
 function attack(id) {
-  let curEnemy = enemies.find((x) => x.id === id);
-  console.log(`you attacked \x1b[31m${curEnemy.name}\x1b[0m`);
+  if (id) {
+    let curEnemy = enemies.find((x) => x.id === id);
+    console.log(`you attacked \x1b[31m${curEnemy.name}\x1b[0m`);
+    console.log(`you dealt \x1b[31m${player.damage}\x1b[0m damage`);
+    dealtDamage += player.damage;
+    if (dealtDamage >= curEnemy.hp) {
+      console.log(`\x1b[92myou defeated the \x1b[31m${curEnemy.name}\x1b[0m`);
+      player.engaged.pop();
+      dealtDamage = 0;
+    }
+  } else {
+    console.log("\x1b[90mthere is nothing to attack\x1b[0m");
+  }
 }
 
 exports.commands = commands;

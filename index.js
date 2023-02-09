@@ -60,7 +60,7 @@ function openPrompt(line = ": ") {
             thisActionItem = word;
           } else if (cmd.type === "attack") {
             if (player.engaged.length > 0) {
-              console.log(player.engaged[0][0]);
+              // console.log(player.engaged[0][0]);
               thisActionItem = player.engaged[0][0];
             } else {
               //check if player is targetting npc
