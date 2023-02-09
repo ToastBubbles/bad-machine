@@ -117,7 +117,8 @@ function loot(container) {
       container.looted = true;
     } else if (container.items.length == 1) {
       let foundItem = container.items[0];
-      console.log(`you found ${foundItem.quantity} ${foundItem.name}`);
+      let mappedItem = items.find((x) => x.id === foundItem[0]);
+      console.log(`you found ${foundItem[1]} ${mappedItem.name}`);
       let isAdded = false;
       if (player.inventory.length > 0) {
         player.inventory.forEach((ownedItem) => {
