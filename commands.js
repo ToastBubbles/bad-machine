@@ -105,7 +105,7 @@ function help() {
     }
   }
 }
-////////////////////////////////////////////
+///////////////////////////////////////////
 function describeLoc(item = player.location) {
   console.log(item.desc);
 }
