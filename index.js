@@ -83,7 +83,7 @@ function openPrompt(line = ">> ") {
         for (let item of player.inventory) {
           let mapped = items.find((x) => x.id == item[0]);
           if (mapped.name == word) {
-            thisActionItem = word;
+            thisActionItem = mapped;
           }
         }
       }
@@ -95,7 +95,11 @@ function openPrompt(line = ">> ") {
     } else {
       functionHolder();
     }
-    openPrompt();
+    if (player.hp <= 0) {
+      readline.close();
+    } else {
+      openPrompt();
+    }
   });
 }
 

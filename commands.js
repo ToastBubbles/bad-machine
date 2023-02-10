@@ -3,6 +3,7 @@ const { items } = require("./items");
 const { locations } = require("./locations");
 const { enemies } = require("./enemies");
 const { ANSI } = require("./config");
+// let dead = false;
 // const { randomBytes } = require("crypto");
 
 let commands = [
@@ -10,43 +11,64 @@ let commands = [
     text: ["help", "commands"],
     desc: "list commands",
     type: "action",
+    hidden: false,
     f: help,
   },
   {
     text: ["where", "describe", "location", "look", "inspect"],
     desc: "describe location or object",
     type: "action",
+    hidden: false,
     f: describeLoc,
   },
   {
     text: ["loot", "search", "open", "take"],
     desc: "loot a specified container",
     type: "action",
+    hidden: false,
     f: loot,
   },
   {
     text: ["go", "move", "travel"],
     desc: "go in a specified direction",
     type: "action",
+    hidden: false,
     f: go,
   },
   {
     text: ["inventory", "backpack", "inv"],
     desc: "view inventory",
     type: "action",
+    hidden: false,
     f: printInv,
   },
   {
     text: ["attack"],
     desc: "attack",
     type: "attack",
+    hidden: false,
     f: attack,
   },
   {
     text: ["equip"],
     desc: "equip an item",
     type: "action",
+    hidden: false,
     f: equip,
+  },
+  {
+    text: ["eat", "enjoy", "consume", "drink", "sip"],
+    desc: "consume a food item",
+    type: "action",
+    hidden: false,
+    f: eat,
+  },
+  {
+    text: ["die"],
+    desc: "uhh",
+    type: "action",
+    hidden: true,
+    f: die,
   },
   {
     text: [
@@ -66,6 +88,7 @@ let commands = [
     ],
     desc: "waste time",
     type: "silly",
+    hidden: true,
     f: silly,
   },
 ];
@@ -73,9 +96,13 @@ let commands = [
 function help() {
   console.log("commands:");
   for (let command of commands) {
-    console.log(
-      `use || ${command.text.join("  ").padEnd(70, ".")} || to ${command.desc}`
-    );
+    if (!command.hidden) {
+      console.log(
+        `use || ${command.text.join("  ").padEnd(75, ".")} || to ${
+          command.desc
+        }`
+      );
+    }
   }
 }
 ////////////////////////////////////////////
@@ -291,17 +318,17 @@ function spawnEnemy() {
 }
 function spawnLocalEnemy() {}
 
-function equip(name = "") {
-  // console.log(name);
-  if (name.length > 0) {
-    let item = items.find((x) => x.name == name);
+function equip(item) {
+  // console.log(item);
+  if (item) {
+    // let item = items.find((x) => x.id == invItem[0]);
     // console.log(item);
     if (item.type == "sword") {
       player.equippedWeapon = item.id;
-      console.log(`you equipped ${ANSI.green}${name}${ANSI.reset}`);
+      console.log(`you equipped ${ANSI.green}${item.name}${ANSI.reset}`);
       player.damage = item.damage;
     } else {
-      console.log(`you cannot equip ${ANSI.green}${name}${ANSI.reset}`);
+      console.log(`you cannot equip ${ANSI.green}${item.name}${ANSI.reset}`);
     }
   } else {
     console.log(
@@ -365,10 +392,44 @@ function enemyAttack(enemy) {
         `you recieved ${ANSI.red}${attack.damage}${ANSI.reset} damage, your health is ${ANSI.ltgreen}${player.hp}${ANSI.reset}`
       );
       if (player.hp <= 0) {
-        console.log(`${ANSI.ltred}you have died${ANSI.reset}`);
+        die();
       }
     }
   });
+}
+function removeItem(item, quantity) {
+  player.inventory.find((x) => x.id == item[0]);
+}
+function eat(item) {
+  if (item.type == "food") {
+    console.log(
+      `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${ANSI.ltgreen}${item.hp}${ANSI.reset}hp`
+    );
+    player.hp += item.hp;
+  } else {
+    console.log(
+      `${ANSI.ltgrey}you can't eat ${ANSI.ltgreen}${item.name}${ANSI.reset}`
+    );
+  }
+}
+
+function die() {
+  // console.log(`${ANSI.ltred}you have died${ANSI.reset}`);
+  console.log(
+    `${ANSI.ltred}
+    _____    _____   ________     ____    ____       _________      ______   _________   _________
+    \\    \\  /    /  /         \\  |    |  |    |     |          \\   |      | |     ____| |          \\
+     \\    \\/    /  |     _     | |    |  |    |     |     _     \\   |    |  |    |___   |     _     \\
+      \\        /   |    | |    | |    |  |    |     |    |  \\    |  |    |  |     ___|  |    |  \\    |
+       \\      /    |    | |    | |    |  |    |     |    |  |    |  |    |  |    |      |    |  |    |
+        |    |     |    '-'    | |    '--'    |     |    '--'    |  |    |  |    |____  |    '--'    |
+        |    |      \\         /   \\          /      |           /  ,'    ', |         | |           / 
+        '----'       '-------'     '--------'       '----------'   '------' '---------' '----------'
+     ${ANSI.reset}`
+  );
+  player.hp = 0;
+  // dead = true;
+  // readline.close();
 }
 
 exports.commands = commands;
