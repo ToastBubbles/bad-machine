@@ -38,7 +38,7 @@ function start() {
 function describeLocation(loc) {
   console.log(`You are in ${ANSI.ltblue}${loc.name}${ANSI.reset}.`);
 }
-function openPrompt(line = ": ") {
+function openPrompt(line = ">> ") {
   readline.question(line, (input) => {
     let i = 0;
     let functionHolder = null;

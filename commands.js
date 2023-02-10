@@ -258,8 +258,12 @@ function go(dirLoc) {
 }
 function diceRoll(chance) {
   let rand = Math.random() * 100;
-  if (rand < chance) {
-    return true;
+  if (chance == undefined) {
+    return rand;
+  } else {
+    if (rand < chance) {
+      return true;
+    }
   }
 }
 
@@ -313,23 +317,58 @@ function attack(id) {
   if (id > -1) {
     let curEnemy = enemies.find((x) => x.id === id);
     console.log(`you attacked ${ANSI.red}${curEnemy.name}${ANSI.reset}`);
-    console.log(`you dealt ${ANSI.red}${player.damage}${ANSI.reset} damage`);
+    console.log(
+      `you dealt ${ANSI.ltyellow}${player.damage}${ANSI.reset} damage`
+    );
     dealtDamage += player.damage;
     if (dealtDamage >= curEnemy.hp) {
       console.log(
         `${ANSI.ltgreen}you defeated the ${ANSI.red}${curEnemy.name}${ANSI.reset}`
       );
+      let addedLoot = 0;
       curEnemy.loot.forEach((item) => {
         if (diceRoll(item[2])) {
+          addedLoot++;
           addItem([item[0], item[1]]);
         }
       });
+      if (!addedLoot) {
+        console.log(`${ANSI.ltgrey}you found nothing${ANSI.reset}`);
+      }
       player.engaged.pop();
       dealtDamage = 0;
+    } else {
+      enemyAttack(curEnemy);
     }
   } else {
     console.log(`${ANSI.ltgrey}there is nothing to attack${ANSI.reset}`);
   }
+}
+
+function enemyAttack(enemy) {
+  // enemy;
+  let attacked = false;
+  let roll = diceRoll();
+  let curChance = 0;
+  // console.log(roll);
+  enemy.attacks.forEach((attack) => {
+    curChance += attack.chance;
+
+    if (roll < curChance && !attacked) {
+      attacked = true;
+      player.hp -= attack.damage;
+
+      console.log(
+        `${ANSI.red}${enemy.name}${ANSI.reset} used ${ANSI.red}${attack.name}${ANSI.reset}`
+      );
+      console.log(
+        `you recieved ${ANSI.red}${attack.damage}${ANSI.reset} damage, your health is ${ANSI.ltgreen}${player.hp}${ANSI.reset}`
+      );
+      if (player.hp <= 0) {
+        console.log(`${ANSI.ltred}you have died${ANSI.reset}`);
+      }
+    }
+  });
 }
 
 exports.commands = commands;

@@ -7,16 +7,19 @@ const enemies = [
     attacks: [
       {
         name: "bite",
-        dmg: 2,
+        damage: 13,
         chance: 80,
       },
       {
         name: "tail whip",
-        dmg: 6,
+        damage: 26,
         chance: 20,
       },
     ],
-    loot: [[0, 1, 90]],
+    loot: [
+      [0, 1, 75],
+      [7, 1, 15],
+    ],
   },
   {
     id: 1,
@@ -26,18 +29,23 @@ const enemies = [
     attacks: [
       {
         name: "bite",
-        dmg: 2,
+        damage: 26,
         chance: 80,
       },
       {
         name: "crawl",
-        dmg: 3,
-        chance: 20,
+        damage: 46,
+        chance: 19.5,
+      },
+      {
+        name: "slurp",
+        damage: 999999,
+        chance: 0.5,
       },
     ],
     loot: [
-      [1, 1, 90],
-      [4, 2, 50],
+      [5, 1, 20],
+      [6, 1, 20],
     ],
   },
 ];
