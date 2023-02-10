@@ -106,6 +106,26 @@ function silly(action) {
   console.log(`you ${action}`);
 }
 /////////////////////
+
+function addItem(item) {
+  let mappedItem = items.find((x) => x.id === item[0]);
+  let isAdded = false;
+  console.log(
+    `you found ${ANSI.green}${item[1]} ${mappedItem.name}${ANSI.reset}`
+  );
+  if (player.inventory.length > 0) {
+    player.inventory.forEach((ownedItem) => {
+      if (ownedItem[0] === item[0]) {
+        ownedItem[1] += item[1];
+        isAdded = true;
+      }
+    });
+  }
+  if (!isAdded) {
+    player.inventory.push(item);
+    isAdded = true;
+  }
+}
 function loot(container) {
   if (!container) {
     console.log(
@@ -116,45 +136,27 @@ function loot(container) {
 
     if (container.items.length > 0) {
       container.items.forEach((foundItem) => {
-        let mappedItem = items.find((x) => x.id === foundItem[0]);
-        console.log(
-          `you found ${ANSI.green}${foundItem[1]} ${mappedItem.name}${ANSI.reset}`
-        );
-        let isAdded = false;
-        if (player.inventory.length > 0) {
-          player.inventory.forEach((ownedItem) => {
-            if (ownedItem[0] === foundItem[0]) {
-              ownedItem[1] += foundItem[1];
-              isAdded = true;
-            }
-          });
-        }
-        if (!isAdded) {
-          player.inventory.push(foundItem);
-          isAdded = true;
-        }
+        addItem(foundItem);
+        // let mappedItem = items.find((x) => x.id === foundItem[0]);
+        // console.log(
+        //   `you found ${ANSI.green}${foundItem[1]} ${mappedItem.name}${ANSI.reset}`
+        // );
+        // let isAdded = false;
+        // if (player.inventory.length > 0) {
+        //   player.inventory.forEach((ownedItem) => {
+        //     if (ownedItem[0] === foundItem[0]) {
+        //       ownedItem[1] += foundItem[1];
+        //       isAdded = true;
+        //     }
+        //   });
+        // }
+        // if (!isAdded) {
+        //   player.inventory.push(foundItem);
+        //   isAdded = true;
+        // }
       });
       container.looted = true;
-    }
-    // else if (container.items.length == 1) {
-    //   let foundItem = container.items[0];
-    //   let mappedItem = items.find((x) => x.id === foundItem[0]);
-    //   console.log(`you found ${foundItem[1]} ${mappedItem.name}`);
-    //   let isAdded = false;
-    //   if (player.inventory.length > 0) {
-    //     player.inventory.forEach((ownedItem) => {
-    //       if (ownedItem[0] == foundItem[0]) {
-    //         ownedItem[1] += foundItem[1];
-    //         isAdded = true;
-    //       }
-    //     });
-    //   }
-    //   if (!isAdded) {
-    //     player.inventory.push(foundItem);
-    //   }
-    //   container.looted = true;
-    // }
-    else {
+    } else {
       console.log(`${ANSI.ltgrey}you found nothing${ANSI.reset}`);
       container.looted = true;
     }
@@ -262,10 +264,6 @@ function diceRoll(chance) {
 }
 
 function spawnEnemy() {
-  // player.engaged = true;
-  // player.location.atmos.enemies.forEach((enemy) => {
-  //   player.engaged.push([enem[0], enemy[1]]);
-  // });
   let potentialEnemies = [];
   enemies.forEach((enemy) => {
     if (
@@ -305,13 +303,14 @@ function equip(name = "") {
     console.log(
       `${ANSI.ltgrey}please specify what you would like to equip${ANSI.reset}`
     );
-    // player.damage = 1;
   }
 }
-// let curEnemy = {};
+
 let dealtDamage = 0;
+
 function attack(id) {
-  if (id) {
+  // console.log(id);
+  if (id > -1) {
     let curEnemy = enemies.find((x) => x.id === id);
     console.log(`you attacked ${ANSI.red}${curEnemy.name}${ANSI.reset}`);
     console.log(`you dealt ${ANSI.red}${player.damage}${ANSI.reset} damage`);
@@ -320,6 +319,11 @@ function attack(id) {
       console.log(
         `${ANSI.ltgreen}you defeated the ${ANSI.red}${curEnemy.name}${ANSI.reset}`
       );
+      curEnemy.loot.forEach((item) => {
+        if (diceRoll(item[2])) {
+          addItem([item[0], item[1]]);
+        }
+      });
       player.engaged.pop();
       dealtDamage = 0;
     }
