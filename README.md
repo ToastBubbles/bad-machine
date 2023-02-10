@@ -14,7 +14,7 @@ Clone the project
   git clone https://github.com/ToastBubbles/bad-machine
 ```
 
-Using your favorite terminal, navigate to the project directory
+Navigate to the project directory
 
 ```bash
   cd bad-machine
