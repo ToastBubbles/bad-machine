@@ -427,21 +427,23 @@ async function attack(id) {
     });
 
     if (dealtDamage >= curEnemy.hp) {
-      console.log(
-        `${ANSI.ltgreen}you defeated the ${ANSI.red}${curEnemy.name}${ANSI.reset}`
-      );
-      let addedLoot = 0;
-      curEnemy.loot.forEach((item) => {
-        if (diceRoll(item[2])) {
-          addedLoot++;
-          addItem([item[0], item[1]]);
+      await delay(1500).then(() => {
+        console.log(
+          `${ANSI.ltgreen}you defeated the ${ANSI.red}${curEnemy.name}${ANSI.reset}`
+        );
+        let addedLoot = 0;
+        curEnemy.loot.forEach((item) => {
+          if (diceRoll(item[2])) {
+            addedLoot++;
+            addItem([item[0], item[1]]);
+          }
+        });
+        if (!addedLoot) {
+          console.log(`${ANSI.ltgrey}you found nothing${ANSI.reset}`);
         }
+        player.engaged.pop();
+        dealtDamage = 0;
       });
-      if (!addedLoot) {
-        console.log(`${ANSI.ltgrey}you found nothing${ANSI.reset}`);
-      }
-      player.engaged.pop();
-      dealtDamage = 0;
     } else {
       // setTimeout(() => {
       await delay(1500).then(() => enemyAttack(curEnemy));

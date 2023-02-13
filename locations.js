@@ -41,7 +41,10 @@ let locations = [
       {
         names: ["rock"],
         desc: "a suspicious looking rock",
-        items: [[3, 1]],
+        items: [
+          [3, 1],
+          [8, 1],
+        ],
       },
     ],
   },

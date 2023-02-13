@@ -60,6 +60,13 @@ const items = [
     type: "material",
     desc: "",
   },
+  {
+    id: 8,
+    name: "mace",
+    value: 100,
+    type: "weapon",
+    damage: 45,
+  },
 ];
 
 exports.items = items;
