@@ -77,6 +77,27 @@ let locations = [
     },
     containers: [],
   },
+  {
+    name: "Invinhall",
+    desc: "There is a shop to the northeast",
+    coords: [3, 2],
+    type: "outdoor",
+    atmos: {
+      type: "safe",
+    },
+    containers: [],
+  },
+  {
+    name: "Invinhall shopkeep",
+    desc: "buy and sell here",
+    coords: [4, 3],
+    type: "indoor",
+    atmos: {
+      type: "safe",
+      npcs: [[100, 1]],
+    },
+    containers: [],
+  },
 ];
 
 exports.locations = locations;

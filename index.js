@@ -94,7 +94,7 @@ function openPrompt(line = ">> ") {
             thisActionItem = mapped;
           }
           if (thisActionItem == null && index < iArr.length - 1) {
-            console.log("checking two word items");
+            // console.log("checking two word items");
             let multiWord = `${word} ${iArr[index + 1]}`;
 
             if (mapped.name == multiWord) {

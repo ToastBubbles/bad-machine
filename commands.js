@@ -3,7 +3,9 @@ const { items } = require("./items");
 const { locations } = require("./locations");
 const { enemies } = require("./enemies");
 const { ANSI } = require("./config");
-const { resolve } = require("path");
+const { npcs } = require("./npcs");
+const { it } = require("node:test");
+// const { resolve } = require("path");
 // let dead = false;
 // const { randomBytes } = require("crypto");
 
@@ -72,6 +74,20 @@ let commands = [
     f: eat,
   },
   {
+    text: ["chat", "talk"],
+    desc: "talk to NPC",
+    type: "action",
+    hidden: false,
+    f: talk,
+  },
+  {
+    text: ["sell"],
+    desc: "sell an item to an NPC",
+    type: "action",
+    hidden: false,
+    f: sell,
+  },
+  {
     text: ["die"],
     desc: "uhh",
     type: "action",
@@ -118,24 +134,37 @@ async function describeLoc(item = player.location) {
   console.log(item.desc);
 }
 ///////////////////
-// async function printInv() {
-//   if (player.inventory.length > 0) {
-//     for (let item of player.inventory) {
-//       let mappedItem = items.find((x) => x.id === item[0]);
+async function talk() {
+  console.log("u talk");
+}
+async function sell(item) {
+  // console.log(item);
+  let canSell = false;
+  if (item) {
+    if (player.location.atmos.npcs != undefined) {
+      player.location.atmos.npcs.forEach((npc) => {
+        let mappedNPC = npcs.find((x) => x.id == npc[0]);
 
-//       console.log(
-//         `you have ${ANSI.green}${item[1]} ${ANSI.green}${mappedItem.name}${ANSI.reset}`
-//       );
-//     }
-//   } else {
-//     console.log(
-//       "you have a legendary beskar steel sword and 1,230,420 gold coins"
-//     );
-//     // setTimeout(() => {
-//     console.log(`${ANSI.ltgrey}lol jk, u aint got shit${ANSI.reset}`);
-//     // }, 1500);
-//   }
-// }
+        if (mappedNPC.jobs.includes("merchant")) {
+          canSell = true;
+        }
+      });
+      if (canSell) {
+        player.coins += item.value;
+        removeItem(item, 1);
+
+        console.log(
+          `you sold ${ANSI.ltgreen}${item.name}${ANSI.reset} for ${ANSI.yellow}${item.value}${ANSI.reset} coins`
+        );
+      }
+    }
+  } else {
+    console.log(
+      `${ANSI.ltgrey}specifify what you would like to sell${ANSI.reset}`
+    );
+  }
+}
+
 async function printInv() {
   let lines = "";
   if (player.inventory.length > 0) {
@@ -158,23 +187,6 @@ async function printInv() {
   └───────────────────────────────────────┴──────────┴──────────┘
 `
   );
-
-  // if (player.inventory.length > 0) {
-  //   for (let item of player.inventory) {
-  //     let mappedItem = items.find((x) => x.id === item[0]);
-
-  //     console.log(
-  //       `you have ${ANSI.green}${item[1]} ${ANSI.green}${mappedItem.name}${ANSI.reset}`
-  //     );
-  //   }
-  // } else {
-  //   console.log(
-  //     "you have a legendary beskar steel sword and 1,230,420 gold coins"
-  //   );
-  //   // setTimeout(() => {
-  //   console.log(`${ANSI.ltgrey}lol jk, u aint got shit${ANSI.reset}`);
-  //   // }, 1500);
-  // }
 }
 function centerText(str, totalSpace) {
   let i = 0;
@@ -196,9 +208,11 @@ function centerText(str, totalSpace) {
 }
 
 async function printStats() {
+  coins = centerText("Coins: " + player.coins, 41);
   let hp = player.hp.toString().padEnd(20, " ");
   let w = "";
   let def = centerText("Defense: " + player.defense, 41);
+  let lvl = centerText("Level: " + player.level[0], 41);
   // let dmg = centerText(player.damage.toString(), 19);
   let dmg = centerText("Damage: " + player.damage, 19);
   if (player.equippedWeapon == -1) {
@@ -211,8 +225,9 @@ async function printStats() {
   console.log(`
   ┌───────────────────┬─────────────────────────────────────────┐
   │  Current Weapon:  │                 HP: ${ANSI.ltgreen}${hp}${ANSI.reset}│
-  │${ANSI.green}${w}${ANSI.reset}│                                         │
-  │${ANSI.yellow}${dmg}${ANSI.reset}│${def}│
+  │${ANSI.green}${w}${ANSI.reset}│${def}│
+  │${ANSI.yellow}${dmg}${ANSI.reset}│${lvl}│
+  │                   │${coins}│
   └───────────────────┴─────────────────────────────────────────┘
   
   `);
@@ -332,7 +347,7 @@ async function go(dirLoc) {
           if (lastLoc.atmos.type === "safe") {
             console.log(`${ANSI.yellow}you do not feel safe here${ANSI.reset}`);
             if (nextLoc.atmos.randEnemies) {
-              diceRoll(99) && spawnEnemy();
+              diceRoll(30) && spawnEnemy();
             } else {
               spawnLocalEnemy();
             }
@@ -386,7 +401,6 @@ async function spawnEnemy() {
       enemies.find((x) => x.id === player.engaged[0][0]).name
     }${ANSI.reset}`
   );
-  // player.location.level;
 }
 async function spawnLocalEnemy() {}
 async function updateDefense() {
@@ -397,9 +411,7 @@ async function updateDefense() {
       newDefense += items.find((x) => x.id == value).defense;
     }
   }
-  // player.armor.forEach((piece) => {
 
-  // });
   player.defense = newDefense;
 }
 async function equipArmor(item) {
@@ -416,7 +428,6 @@ async function equipArmor(item) {
 }
 
 async function equip(item) {
-  // console.log(item);
   if (item) {
     if (item.type == "weapon") {
       player.equippedWeapon = item.id;
@@ -442,7 +453,6 @@ async function equip(item) {
 let dealtDamage = 0;
 
 async function attack(id) {
-  // console.log(id);
   if (id > -1) {
     let curEnemy = enemies.find((x) => x.id === id);
     console.log(`you attacked ${ANSI.red}${curEnemy.name}${ANSI.reset}`);
@@ -468,17 +478,35 @@ async function attack(id) {
         if (!addedLoot) {
           console.log(`${ANSI.ltgrey}you found nothing${ANSI.reset}`);
         }
+
+        addXP(curEnemy.xp);
         player.engaged.pop();
         dealtDamage = 0;
       });
     } else {
-      // setTimeout(() => {
       await delay(1500).then(() => enemyAttack(curEnemy));
-      // }, 1500);
     }
   } else {
     console.log(`${ANSI.ltgrey}there is nothing to attack${ANSI.reset}`);
   }
+}
+
+async function addXP(xpToAdd) {
+  let levelsGained = 0;
+  player.level[1] += xpToAdd;
+  while (player.level[1] >= 100) {
+    player.level[1] -= 100;
+    player.level[0] += 1;
+    levelsGained++;
+  }
+  console.log(`gained ${ANSI.ltgreen}${xpToAdd} xp${ANSI.reset}`);
+  // await delay(500).then(() => {
+  if (levelsGained > 0) {
+    console.log(
+      `${ANSI.cyan}you have reached level ${ANSI.yellow}${player.level[0]}${ANSI.reset}`
+    );
+  }
+  // });
 }
 
 async function enemyAttack(enemy) {
@@ -531,10 +559,15 @@ async function delay(ms) {
     }, ms);
   });
 }
+
 async function removeItem(item, quantity) {
   let itemToBeRemoved = player.inventory.find((x) => x[0] == item.id);
-  // console.log(item);
-  // console.log(itemToBeRemoved);
+  if (
+    itemToBeRemoved[0] == player.equippedWeapon &&
+    itemToBeRemoved[1] == quantity
+  ) {
+  }
+
   if (itemToBeRemoved[1] > quantity) {
     itemToBeRemoved[1] -= quantity;
   } else {
@@ -545,11 +578,27 @@ async function removeItem(item, quantity) {
 async function eat(item) {
   if (item) {
     if (item.type == "food") {
-      console.log(
-        `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${ANSI.ltgreen}${item.hp}${ANSI.reset}hp`
-      );
-      player.hp += item.hp;
-      removeItem(item, 1);
+      if (player.hp + item.hp > 100) {
+        if (player.hp < 100) {
+          console.log(
+            `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${
+              ANSI.ltgreen
+            }${100 - player.hp}${ANSI.reset}hp`
+          );
+          player.hp = 100;
+          removeItem(item, 1);
+        } else {
+          console.log(
+            `${ANSI.ltgrey}you are too full to consume the ${ANSI.green}${item.name}${ANSI.reset}`
+          );
+        }
+      } else {
+        console.log(
+          `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${ANSI.ltgreen}${item.hp}${ANSI.reset}hp`
+        );
+        player.hp += item.hp;
+        removeItem(item, 1);
+      }
     } else {
       console.log(
         `${ANSI.ltgrey}you can't eat ${ANSI.ltgreen}${item.name}${ANSI.reset}`
