@@ -118,23 +118,63 @@ async function describeLoc(item = player.location) {
   console.log(item.desc);
 }
 ///////////////////
+// async function printInv() {
+//   if (player.inventory.length > 0) {
+//     for (let item of player.inventory) {
+//       let mappedItem = items.find((x) => x.id === item[0]);
+
+//       console.log(
+//         `you have ${ANSI.green}${item[1]} ${ANSI.green}${mappedItem.name}${ANSI.reset}`
+//       );
+//     }
+//   } else {
+//     console.log(
+//       "you have a legendary beskar steel sword and 1,230,420 gold coins"
+//     );
+//     // setTimeout(() => {
+//     console.log(`${ANSI.ltgrey}lol jk, u aint got shit${ANSI.reset}`);
+//     // }, 1500);
+//   }
+// }
 async function printInv() {
+  let lines = "";
   if (player.inventory.length > 0) {
     for (let item of player.inventory) {
       let mappedItem = items.find((x) => x.id === item[0]);
-
-      console.log(
-        `you have ${ANSI.green}${item[1]} ${ANSI.green}${mappedItem.name}${ANSI.reset}`
-      );
+      lines += `\n  │${mappedItem.name.padEnd(39, " ")}│${item[1]
+        .toString()
+        .padStart(10, " ")}│${mappedItem.value.toString().padStart(8, " ")} C│`;
+      // console.log(
+      //   `you have ${ANSI.green}${item[1]} ${ANSI.green}${mappedItem.name}${ANSI.reset}`
+      // );
     }
-  } else {
-    console.log(
-      "you have a legendary beskar steel sword and 1,230,420 gold coins"
-    );
-    // setTimeout(() => {
-    console.log(`${ANSI.ltgrey}lol jk, u aint got shit${ANSI.reset}`);
-    // }, 1500);
   }
+
+  console.log(
+    `
+  ┌───────────────────────────────────────┬──────────┬──────────┐
+  │      Item:                            │  Qty:    │  Price:  │
+  ├───────────────────────────────────────┼──────────┼──────────┤${lines}
+  └───────────────────────────────────────┴──────────┴──────────┘
+`
+  );
+
+  // if (player.inventory.length > 0) {
+  //   for (let item of player.inventory) {
+  //     let mappedItem = items.find((x) => x.id === item[0]);
+
+  //     console.log(
+  //       `you have ${ANSI.green}${item[1]} ${ANSI.green}${mappedItem.name}${ANSI.reset}`
+  //     );
+  //   }
+  // } else {
+  //   console.log(
+  //     "you have a legendary beskar steel sword and 1,230,420 gold coins"
+  //   );
+  //   // setTimeout(() => {
+  //   console.log(`${ANSI.ltgrey}lol jk, u aint got shit${ANSI.reset}`);
+  //   // }, 1500);
+  // }
 }
 function centerText(str, totalSpace) {
   let i = 0;
