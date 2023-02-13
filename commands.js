@@ -3,6 +3,7 @@ const { items } = require("./items");
 const { locations } = require("./locations");
 const { enemies } = require("./enemies");
 const { ANSI } = require("./config");
+const { resolve } = require("path");
 // let dead = false;
 // const { randomBytes } = require("crypto");
 
@@ -13,6 +14,13 @@ let commands = [
     type: "action",
     hidden: false,
     f: help,
+  },
+  {
+    text: ["stats"],
+    desc: "print player stats",
+    type: "action",
+    hidden: false,
+    f: printStats,
   },
   {
     text: ["where", "describe", "location", "look", "inspect"],
@@ -93,7 +101,7 @@ let commands = [
   },
 ];
 
-function help() {
+async function help() {
   console.log("commands:");
   for (let command of commands) {
     if (!command.hidden) {
@@ -106,11 +114,11 @@ function help() {
   }
 }
 ///////////////////////////////////////////
-function describeLoc(item = player.location) {
+async function describeLoc(item = player.location) {
   console.log(item.desc);
 }
 ///////////////////
-function printInv() {
+async function printInv() {
   if (player.inventory.length > 0) {
     for (let item of player.inventory) {
       let mappedItem = items.find((x) => x.id === item[0]);
@@ -128,13 +136,53 @@ function printInv() {
     // }, 1500);
   }
 }
+function centerText(str, totalSpace) {
+  let i = 0;
+
+  let space = totalSpace - str.length;
+  if (space % 2 == 0) {
+    while (i < space / 2) {
+      str = " " + str + " ";
+      i++;
+    }
+  } else {
+    while (i < space / 2 - 1) {
+      str = " " + str + " ";
+      i++;
+    }
+    str = str + " ";
+  }
+  return str;
+}
+
+async function printStats() {
+  let hp = player.hp.toString().padEnd(22, " ");
+  let w = "";
+  // let dmg = centerText(player.damage.toString(), 19);
+  let dmg = centerText("Damage: " + player.damage, 19);
+  if (player.equippedWeapon == 0) {
+    w = "fists"; //.padEnd(17, " ");
+  } else {
+    w = items.find((x) => x.id == player.equippedWeapon).name; //.padEnd(17, " ");
+  }
+  w = centerText(w, 19);
+
+  console.log(`
+  ┌───────────────────┬─────────────────────────────────────────┐
+  │  Current Weapon:  │               HP: ${ANSI.ltgreen}${hp}${ANSI.reset}│
+  │${ANSI.green}${w}${ANSI.reset}│                                         │
+  │${ANSI.yellow}${dmg}${ANSI.reset}│                                         │
+  └───────────────────┴─────────────────────────────────────────┘
+  
+  `);
+}
 /////////////////////
-function silly(action) {
+async function silly(action) {
   console.log(`you ${action}`);
 }
 /////////////////////
 
-function addItem(item) {
+async function addItem(item) {
   let mappedItem = items.find((x) => x.id === item[0]);
   let isAdded = false;
   console.log(
@@ -153,7 +201,7 @@ function addItem(item) {
     isAdded = true;
   }
 }
-function loot(container) {
+async function loot(container) {
   if (!container) {
     console.log(
       `${ANSI.ltgrey}specify what you would like to search${ANSI.reset}`
@@ -164,23 +212,6 @@ function loot(container) {
     if (container.items.length > 0) {
       container.items.forEach((foundItem) => {
         addItem(foundItem);
-        // let mappedItem = items.find((x) => x.id === foundItem[0]);
-        // console.log(
-        //   `you found ${ANSI.green}${foundItem[1]} ${mappedItem.name}${ANSI.reset}`
-        // );
-        // let isAdded = false;
-        // if (player.inventory.length > 0) {
-        //   player.inventory.forEach((ownedItem) => {
-        //     if (ownedItem[0] === foundItem[0]) {
-        //       ownedItem[1] += foundItem[1];
-        //       isAdded = true;
-        //     }
-        //   });
-        // }
-        // if (!isAdded) {
-        //   player.inventory.push(foundItem);
-        //   isAdded = true;
-        // }
       });
       container.looted = true;
     } else {
@@ -194,7 +225,7 @@ function loot(container) {
   }
 }
 
-function go(dirLoc) {
+async function go(dirLoc) {
   if (player.engaged.length == 0) {
     let nextPos = null;
     let canMove = true;
@@ -283,7 +314,7 @@ function go(dirLoc) {
     console.log(`${ANSI.ltred}you cannot escape this enemy${ANSI.reset}`);
   }
 }
-function diceRoll(chance) {
+async function diceRoll(chance) {
   let rand = Math.random() * 100;
   if (chance == undefined) {
     return rand;
@@ -294,7 +325,7 @@ function diceRoll(chance) {
   }
 }
 
-function spawnEnemy() {
+async function spawnEnemy() {
   let potentialEnemies = [];
   enemies.forEach((enemy) => {
     if (
@@ -316,19 +347,23 @@ function spawnEnemy() {
   );
   // player.location.level;
 }
-function spawnLocalEnemy() {}
+async function spawnLocalEnemy() {}
 
-function equip(item) {
+async function equip(item) {
   // console.log(item);
   if (item) {
     // let item = items.find((x) => x.id == invItem[0]);
     // console.log(item);
-    if (item.type == "sword") {
+    if (item.type == "weapon") {
       player.equippedWeapon = item.id;
       console.log(`you equipped ${ANSI.green}${item.name}${ANSI.reset}`);
       player.damage = item.damage;
-    } else {
+    } else if (item.name != undefined) {
       console.log(`you cannot equip ${ANSI.green}${item.name}${ANSI.reset}`);
+    } else {
+      console.log(
+        `you cannot equip ${ANSI.green}${item.names[0]}${ANSI.reset}`
+      );
     }
   } else {
     console.log(
@@ -339,15 +374,18 @@ function equip(item) {
 
 let dealtDamage = 0;
 
-function attack(id) {
+async function attack(id) {
   // console.log(id);
   if (id > -1) {
     let curEnemy = enemies.find((x) => x.id === id);
     console.log(`you attacked ${ANSI.red}${curEnemy.name}${ANSI.reset}`);
-    console.log(
-      `you dealt ${ANSI.ltyellow}${player.damage}${ANSI.reset} damage`
-    );
-    dealtDamage += player.damage;
+    await delay(1500).then(() => {
+      console.log(
+        `you dealt ${ANSI.ltyellow}${player.damage}${ANSI.reset} damage`
+      );
+      dealtDamage += player.damage;
+    });
+
     if (dealtDamage >= curEnemy.hp) {
       console.log(
         `${ANSI.ltgreen}you defeated the ${ANSI.red}${curEnemy.name}${ANSI.reset}`
@@ -365,42 +403,68 @@ function attack(id) {
       player.engaged.pop();
       dealtDamage = 0;
     } else {
-      enemyAttack(curEnemy);
+      // setTimeout(() => {
+      await delay(1500).then(() => enemyAttack(curEnemy));
+      // }, 1500);
     }
   } else {
     console.log(`${ANSI.ltgrey}there is nothing to attack${ANSI.reset}`);
   }
 }
 
-function enemyAttack(enemy) {
-  // enemy;
+async function enemyAttack(enemy) {
   let attacked = false;
-  let roll = diceRoll();
+  let roll = await diceRoll();
   let curChance = 0;
-  // console.log(roll);
+  let thisAttack = {};
+
   enemy.attacks.forEach((attack) => {
     curChance += attack.chance;
 
     if (roll < curChance && !attacked) {
       attacked = true;
-      player.hp -= attack.damage;
+      // console.log(attack);
+      thisAttack = attack;
+    }
+  });
+  if (attacked) {
+    await delay(1500).then(() => {
+      player.hp -= thisAttack.damage;
 
       console.log(
-        `${ANSI.red}${enemy.name}${ANSI.reset} used ${ANSI.red}${attack.name}${ANSI.reset}`
+        `${ANSI.red}${enemy.name}${ANSI.reset} used ${ANSI.red}${thisAttack.name}${ANSI.reset}`
       );
-      console.log(
-        `you recieved ${ANSI.red}${attack.damage}${ANSI.reset} damage, your health is ${ANSI.ltgreen}${player.hp}${ANSI.reset}`
-      );
+    });
+
+    await delay(1500).then(() => {
+      if (player.hp < 0) {
+        console.log(
+          `you recieved ${ANSI.red}${thisAttack.damage}${ANSI.reset} damage, your health is ${ANSI.ltred}0${ANSI.reset}`
+        );
+      } else {
+        console.log(
+          `you recieved ${ANSI.red}${thisAttack.damage}${ANSI.reset} damage, your health is ${ANSI.ltgreen}${player.hp}${ANSI.reset}`
+        );
+      }
+
       if (player.hp <= 0) {
         die();
       }
-    }
+    });
+  }
+}
+
+async function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("");
+    }, ms);
   });
 }
-function removeItem(item, quantity) {
+async function removeItem(item, quantity) {
   player.inventory.find((x) => x.id == item[0]);
 }
-function eat(item) {
+async function eat(item) {
   if (item.type == "food") {
     console.log(
       `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${ANSI.ltgreen}${item.hp}${ANSI.reset}hp`
@@ -413,10 +477,11 @@ function eat(item) {
   }
 }
 
-function die() {
+async function die() {
   // console.log(`${ANSI.ltred}you have died${ANSI.reset}`);
-  console.log(
-    `${ANSI.ltred}
+  await delay(500).then(() => {
+    console.log(
+      `${ANSI.ltred}
     _____    _____   ________     ____    ____       _________      ______   _________   _________
     \\    \\  /    /  /         \\  |    |  |    |     |          \\   |      | |     ____| |          \\
      \\    \\/    /  |     _     | |    |  |    |     |     _     \\   |    |  |    |___   |     _     \\
@@ -426,8 +491,9 @@ function die() {
         |    |      \\         /   \\          /      |           /  ,'    ', |         | |           / 
         '----'       '-------'     '--------'       '----------'   '------' '---------' '----------'
      ${ANSI.reset}`
-  );
-  player.hp = 0;
+    );
+    player.hp = 0;
+  });
   // dead = true;
   // readline.close();
 }

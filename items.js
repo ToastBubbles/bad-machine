@@ -35,7 +35,7 @@ const items = [
     id: 4,
     name: "shortsword",
     value: 30,
-    type: "sword",
+    type: "weapon",
     damage: 12,
     desc: "",
   },

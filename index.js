@@ -91,15 +91,29 @@ function openPrompt(line = ">> ") {
     if (i == 0) {
       console.log(`I don't know the command: ${input}`);
     } else if (thisActionItem != null) {
-      functionHolder(thisActionItem);
+      functionHolder(thisActionItem).then(() => {
+        // openPrompt();
+        if (player.hp <= 0) {
+          readline.close();
+        } else {
+          openPrompt();
+        }
+      });
     } else {
-      functionHolder();
+      functionHolder().then(() => {
+        if (player.hp <= 0) {
+          readline.close();
+        } else {
+          openPrompt();
+        }
+        // openPrompt();
+      });
     }
-    if (player.hp <= 0) {
-      readline.close();
-    } else {
-      openPrompt();
-    }
+    // if (player.hp <= 0) {
+    //   readline.close();
+    // } else {
+    //   openPrompt();
+    // }
   });
 }
 
