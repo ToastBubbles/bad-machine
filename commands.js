@@ -502,18 +502,31 @@ async function delay(ms) {
   });
 }
 async function removeItem(item, quantity) {
-  player.inventory.find((x) => x.id == item[0]);
+  let itemToBeRemoved = player.inventory.find((x) => x[0] == item.id);
+  // console.log(item);
+  // console.log(itemToBeRemoved);
+  if (itemToBeRemoved[1] > quantity) {
+    itemToBeRemoved[1] -= quantity;
+  } else {
+    itemToBeRemoved[1] = 0;
+    player.inventory.splice(player.inventory.indexOf(itemToBeRemoved), 1);
+  }
 }
 async function eat(item) {
-  if (item.type == "food") {
-    console.log(
-      `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${ANSI.ltgreen}${item.hp}${ANSI.reset}hp`
-    );
-    player.hp += item.hp;
+  if (item) {
+    if (item.type == "food") {
+      console.log(
+        `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${ANSI.ltgreen}${item.hp}${ANSI.reset}hp`
+      );
+      player.hp += item.hp;
+      removeItem(item, 1);
+    } else {
+      console.log(
+        `${ANSI.ltgrey}you can't eat ${ANSI.ltgreen}${item.name}${ANSI.reset}`
+      );
+    }
   } else {
-    console.log(
-      `${ANSI.ltgrey}you can't eat ${ANSI.ltgreen}${item.name}${ANSI.reset}`
-    );
+    console.log(`${ANSI.ltgrey}what would you like to eat${ANSI.reset}`);
   }
 }
 

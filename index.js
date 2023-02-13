@@ -90,6 +90,7 @@ function openPrompt(line = ">> ") {
     }
     if (i == 0) {
       console.log(`I don't know the command: ${input}`);
+      openPrompt();
     } else if (thisActionItem != null) {
       functionHolder(thisActionItem).then(() => {
         // openPrompt();
