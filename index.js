@@ -2,7 +2,14 @@ const { player } = require("./player");
 const { items } = require("./items");
 const { commands } = require("./commands");
 const { ANSI } = require("./config");
-
+/**
+ * TODO:
+ *
+ * allow multiple word items to be used
+ *
+ * factor in defense into combat
+ *
+ */
 const cardDirections = [
   "north",
   "northwest",

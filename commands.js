@@ -196,11 +196,12 @@ function centerText(str, totalSpace) {
 }
 
 async function printStats() {
-  let hp = player.hp.toString().padEnd(22, " ");
+  let hp = player.hp.toString().padEnd(20, " ");
   let w = "";
+  let def = centerText("Defense: " + player.defense, 41);
   // let dmg = centerText(player.damage.toString(), 19);
   let dmg = centerText("Damage: " + player.damage, 19);
-  if (player.equippedWeapon == 0) {
+  if (player.equippedWeapon == -1) {
     w = "fists"; //.padEnd(17, " ");
   } else {
     w = items.find((x) => x.id == player.equippedWeapon).name; //.padEnd(17, " ");
@@ -209,9 +210,9 @@ async function printStats() {
 
   console.log(`
   ┌───────────────────┬─────────────────────────────────────────┐
-  │  Current Weapon:  │               HP: ${ANSI.ltgreen}${hp}${ANSI.reset}│
+  │  Current Weapon:  │                 HP: ${ANSI.ltgreen}${hp}${ANSI.reset}│
   │${ANSI.green}${w}${ANSI.reset}│                                         │
-  │${ANSI.yellow}${dmg}${ANSI.reset}│                                         │
+  │${ANSI.yellow}${dmg}${ANSI.reset}│${def}│
   └───────────────────┴─────────────────────────────────────────┘
   
   `);
@@ -388,16 +389,42 @@ async function spawnEnemy() {
   // player.location.level;
 }
 async function spawnLocalEnemy() {}
+async function updateDefense() {
+  let newDefense = 0;
+  for (const [key, value] of Object.entries(player.armor)) {
+    // console.log(`${key}: ${value}`);
+    if (value != -1) {
+      newDefense += items.find((x) => x.id == value).defense;
+    }
+  }
+  // player.armor.forEach((piece) => {
+
+  // });
+  player.defense = newDefense;
+}
+async function equipArmor(item) {
+  if (item.subtype == "helmet") {
+    player.armor.helmet = item.id;
+  } else if (item.subtype == "chest") {
+    player.armor.chest = item.id;
+  } else if (item.subtype == "legs") {
+    player.armor.legs = item.id;
+  } else if (item.subtype == "feet") {
+    player.armor.feet = item.id;
+  }
+  updateDefense();
+}
 
 async function equip(item) {
   // console.log(item);
   if (item) {
-    // let item = items.find((x) => x.id == invItem[0]);
-    // console.log(item);
     if (item.type == "weapon") {
       player.equippedWeapon = item.id;
       console.log(`you equipped ${ANSI.green}${item.name}${ANSI.reset}`);
       player.damage = item.damage;
+    } else if (item.type == "armor") {
+      console.log(`you equipped ${ANSI.green}${item.name}${ANSI.reset}`);
+      equipArmor(item);
     } else if (item.name != undefined) {
       console.log(`you cannot equip ${ANSI.green}${item.name}${ANSI.reset}`);
     } else {

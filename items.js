@@ -67,6 +67,14 @@ const items = [
     type: "weapon",
     damage: 45,
   },
+  {
+    id: 9,
+    name: "helmet",
+    value: 45,
+    type: "armor",
+    subtype: "helmet",
+    defense: 10,
+  },
 ];
 
 exports.items = items;
