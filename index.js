@@ -53,7 +53,8 @@ function openPrompt(line = ">> ") {
     let actionType = "";
     for (let cmd of commands) {
       let iArr = input.toLocaleLowerCase().split(" ");
-      for (let word of iArr) {
+      // for (let word of iArr) {
+      iArr.forEach((word, index) => {
         if (cmd.text.includes(word)) {
           i++;
           if (
@@ -92,8 +93,16 @@ function openPrompt(line = ">> ") {
           if (mapped.name == word) {
             thisActionItem = mapped;
           }
+          if (thisActionItem == null && index < iArr.length - 1) {
+            console.log("checking two word items");
+            let multiWord = `${word} ${iArr[index + 1]}`;
+
+            if (mapped.name == multiWord) {
+              thisActionItem = mapped;
+            }
+          }
         }
-      }
+      }); //
     }
     if (i == 0) {
       console.log(`I don't know the command: ${input}`);

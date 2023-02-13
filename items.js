@@ -69,7 +69,7 @@ const items = [
   },
   {
     id: 9,
-    name: "helmet",
+    name: "iron helmet",
     value: 45,
     type: "armor",
     subtype: "helmet",
