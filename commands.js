@@ -562,12 +562,25 @@ async function delay(ms) {
 
 async function removeItem(item, quantity) {
   let itemToBeRemoved = player.inventory.find((x) => x[0] == item.id);
-  if (
-    itemToBeRemoved[0] == player.equippedWeapon &&
-    itemToBeRemoved[1] == quantity
-  ) {
+  if (itemToBeRemoved[1] == quantity) {
+    if (itemToBeRemoved[0] == player.equippedWeapon) {
+      player.equippedWeapon = -1;
+      player.damage = 1;
+    } else if (itemToBeRemoved[0] == player.armor.helmet) {
+      player.armor.helmet = -1;
+      updateDefense();
+    } else if (itemToBeRemoved[0] == player.armor.chest) {
+      player.armor.chest = -1;
+      updateDefense();
+    } else if (itemToBeRemoved[0] == player.armor.legs) {
+      player.armor.legs = -1;
+      updateDefense();
+    } else if (itemToBeRemoved[0] == player.armor.feet) {
+      player.armor.feet = -1;
+      updateDefense();
+    }
   }
-
+  //
   if (itemToBeRemoved[1] > quantity) {
     itemToBeRemoved[1] -= quantity;
   } else {
