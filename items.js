@@ -75,6 +75,30 @@ const items = [
     subtype: "helmet",
     defense: 10,
   },
+  {
+    id: 10,
+    name: "chestplate",
+    value: 45,
+    type: "armor",
+    subtype: "chest",
+    defense: 30,
+  },
+  {
+    id: 11,
+    name: "leggings",
+    value: 45,
+    type: "armor",
+    subtype: "legs",
+    defense: 20,
+  },
+  {
+    id: 12,
+    name: "boots",
+    value: 45,
+    type: "armor",
+    subtype: "boots",
+    defense: 10,
+  },
 ];
 
 exports.items = items;

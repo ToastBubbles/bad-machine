@@ -497,8 +497,9 @@ async function enemyAttack(enemy) {
     }
   });
   if (attacked) {
+    let calcDamage = thisAttack.damage - Math.round(player.defense / 5);
     await delay(1500).then(() => {
-      player.hp -= thisAttack.damage;
+      player.hp -= calcDamage;
 
       console.log(
         `${ANSI.red}${enemy.name}${ANSI.reset} used ${ANSI.red}${thisAttack.name}${ANSI.reset}`
@@ -508,11 +509,11 @@ async function enemyAttack(enemy) {
     await delay(1500).then(() => {
       if (player.hp < 0) {
         console.log(
-          `you recieved ${ANSI.red}${thisAttack.damage}${ANSI.reset} damage, your health is ${ANSI.ltred}0${ANSI.reset}`
+          `you recieved ${ANSI.red}${calcDamage}${ANSI.reset} damage, your health is ${ANSI.ltred}0${ANSI.reset}`
         );
       } else {
         console.log(
-          `you recieved ${ANSI.red}${thisAttack.damage}${ANSI.reset} damage, your health is ${ANSI.ltgreen}${player.hp}${ANSI.reset}`
+          `you recieved ${ANSI.red}${calcDamage}${ANSI.reset} damage, your health is ${ANSI.ltgreen}${player.hp}${ANSI.reset}`
         );
       }
 
