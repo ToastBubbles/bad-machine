@@ -99,6 +99,14 @@ const items = [
     subtype: "boots",
     defense: 10,
   },
+  {
+    id: 13,
+    name: "healing staff",
+    value: 65,
+    type: "weapon",
+    // subtype: "boots",
+    damage: -15,
+  },
 ];
 
 exports.items = items;

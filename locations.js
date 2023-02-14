@@ -60,7 +60,7 @@ let locations = [
     atmos: {
       type: "hazardous",
       level: 1,
-      randEnemies: true,
+      randEnemies: false,
     },
     containers: [],
   },

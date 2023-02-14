@@ -151,28 +151,34 @@ async function describeLoc(item = player.location) {
 async function talk() {
   console.log("u talk");
 }
-async function checkForNPC(type) {
+function checkForNPC(type) {
   let canSell = false;
+  let id = -1;
   if (player.location.atmos.npcs != undefined) {
     player.location.atmos.npcs.forEach((npc) => {
       let mappedNPC = npcs.find((x) => x.id == npc[0]);
 
       if (mappedNPC.jobs.includes(type)) {
         canSell = true;
+        id = mappedNPC.id;
       }
     });
   }
-  return canSell;
+  return { canSell, id };
 }
 
 async function sell(item) {
   if (item) {
-    if (checkForNPC("merchant")) {
+    let merchantInfo = checkForNPC("merchant");
+    // console.log(merchantInfo);
+    if (merchantInfo.canSell) {
       player.coins += item.value;
       removeItem(item, 1);
 
       console.log(
-        `you sold ${ANSI.ltgreen}${item.name}${ANSI.reset} for ${ANSI.yellow}${item.value}${ANSI.reset} coins`
+        `you sold ${ANSI.ltgreen}${item.name}${ANSI.reset} for ${ANSI.yellow}${
+          item.value
+        }${ANSI.reset} ${item.value != 1 ? "coins" : "coin"}`
       );
     } else {
       console.log(
@@ -183,7 +189,13 @@ async function sell(item) {
 }
 async function buy(item) {
   if (item) {
-    addItem(item, true);
+    let merchantInfo = checkForNPC("merchant");
+    let inv = npcs.find((x) => x.id == merchantInfo.id).inventory;
+    for (let invItem of inv) {
+      if (invItem[0] == item.id) {
+        addItem(item, true);
+      }
+    }
   } else {
     console.log(
       `${ANSI.ltgrey}specify what you would likte to purchase${ANSI.reset}`
