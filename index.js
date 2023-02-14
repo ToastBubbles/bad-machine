@@ -88,20 +88,33 @@ function openPrompt(line = ">> ") {
         if (cardDirections.includes(word)) {
           thisActionItem = word;
         }
-        for (let item of player.inventory) {
-          let mapped = items.find((x) => x.id == item[0]);
-          if (mapped.name == word) {
-            thisActionItem = mapped;
+        for (let item of items) {
+          if (item.name == word) {
+            thisActionItem = item;
           }
           if (thisActionItem == null && index < iArr.length - 1) {
             // console.log("checking two word items");
             let multiWord = `${word} ${iArr[index + 1]}`;
 
-            if (mapped.name == multiWord) {
-              thisActionItem = mapped;
+            if (item.name == multiWord) {
+              thisActionItem = item;
             }
           }
         }
+        // for (let item of player.inventory) {
+        //   let mapped = items.find((x) => x.id == item[0]);
+        //   if (mapped.name == word) {
+        //     thisActionItem = mapped;
+        //   }
+        //   if (thisActionItem == null && index < iArr.length - 1) {
+        //     // console.log("checking two word items");
+        //     let multiWord = `${word} ${iArr[index + 1]}`;
+
+        //     if (mapped.name == multiWord) {
+        //       thisActionItem = mapped;
+        //     }
+        //   }
+        // }
       }); //
     }
     if (i == 0) {

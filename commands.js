@@ -168,13 +168,16 @@ function checkForNPC(type) {
 }
 
 async function sell(item) {
-  if (item) {
+  if (checkInventory(item)) {
     let merchantInfo = checkForNPC("merchant");
     // console.log(merchantInfo);
     if (merchantInfo.canSell) {
       player.coins += item.value;
       removeItem(item, 1);
-
+      let merchant = npcs.find((x) => (x.id = merchantInfo.id));
+      // merchant.inventory
+      // addItem(item, 1, merchant.inventory);
+      addItem([item.id, 1], merchant.inventory);
       console.log(
         `you sold ${ANSI.ltgreen}${item.name}${ANSI.reset} for ${ANSI.yellow}${
           item.value
@@ -191,9 +194,19 @@ async function buy(item) {
   if (item) {
     let merchantInfo = checkForNPC("merchant");
     let inv = npcs.find((x) => x.id == merchantInfo.id).inventory;
-    for (let invItem of inv) {
-      if (invItem[0] == item.id) {
-        addItem(item, true);
+    if (checkInventory(item, inv)) {
+      for (let invItem of inv) {
+        if (invItem[0] == item.id) {
+          if (player.coins >= item.value) {
+            addItem([item.id, 1], player.inventory, true);
+            removeItem(item, 1, inv);
+            player.coins -= item.value;
+          } else {
+            console.log(
+              `${ANSI.ltgrey}you do not have enough coins${ANSI.reset}`
+            );
+          }
+        }
       }
     }
   } else {
@@ -202,12 +215,21 @@ async function buy(item) {
     );
   }
 }
-async function printStore() {}
+async function printStore() {
+  let id = checkForNPC("merchant").id;
+  // console.log(id);
+  if (id != -1) {
+    let npc = npcs.find((x) => x.id == id);
+    printInv(npc.inventory);
+  } else {
+    console.log(`${ANSI.ltgrey}there is no merchant here${ANSI.reset}`);
+  }
+}
 
-async function printInv() {
+async function printInv(inv = player.inventory) {
   let lines = "";
-  if (player.inventory.length > 0) {
-    for (let item of player.inventory) {
+  if (inv.length > 0) {
+    for (let item of inv) {
       let mappedItem = items.find((x) => x.id === item[0]);
       lines += `\n  │${mappedItem.name.padEnd(39, " ")}│${item[1]
         .toString()
@@ -276,8 +298,18 @@ async function silly(action) {
   console.log(`you ${action}`);
 }
 /////////////////////
-
-async function addItem(item, didBuy = false) {
+function checkInventory(item, inv = player.inventory) {
+  if (item) {
+    let mapped = inv.find((x) => x[0] == item.id);
+    if (mapped) {
+      // console.log(mapped);
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+async function addItem(item, inv = player.inventory, didBuy = false) {
   let mappedItem = items.find((x) => x.id === item[0]);
   let isAdded = false;
   if (didBuy) {
@@ -290,8 +322,8 @@ async function addItem(item, didBuy = false) {
     );
   }
 
-  if (player.inventory.length > 0) {
-    player.inventory.forEach((ownedItem) => {
+  if (inv.length > 0) {
+    inv.forEach((ownedItem) => {
       if (ownedItem[0] === item[0]) {
         ownedItem[1] += item[1];
         isAdded = true;
@@ -299,7 +331,7 @@ async function addItem(item, didBuy = false) {
     });
   }
   if (!isAdded) {
-    player.inventory.push(item);
+    inv.push(item);
     isAdded = true;
   }
 }
@@ -475,7 +507,7 @@ async function equipArmor(item) {
 }
 
 async function equip(item) {
-  if (item) {
+  if (checkInventory(item)) {
     if (item.type == "weapon") {
       player.equippedWeapon = item.id;
       console.log(`you equipped ${ANSI.green}${item.name}${ANSI.reset}`);
@@ -607,9 +639,10 @@ async function delay(ms) {
   });
 }
 
-async function removeItem(item, quantity) {
-  let itemToBeRemoved = player.inventory.find((x) => x[0] == item.id);
-  if (itemToBeRemoved[1] == quantity) {
+async function removeItem(item, quantity = 1, inv = player.inventory) {
+  let itemToBeRemoved = inv.find((x) => x[0] == item.id);
+
+  if (itemToBeRemoved[1] == quantity && inv == player.inventory) {
     if (itemToBeRemoved[0] == player.equippedWeapon) {
       player.equippedWeapon = -1;
       player.damage = 1;
@@ -632,41 +665,43 @@ async function removeItem(item, quantity) {
     itemToBeRemoved[1] -= quantity;
   } else {
     itemToBeRemoved[1] = 0;
-    player.inventory.splice(player.inventory.indexOf(itemToBeRemoved), 1);
+    inv.splice(inv.indexOf(itemToBeRemoved), 1);
   }
 }
 
 async function eat(item) {
   if (item) {
-    if (item.type == "food") {
-      if (player.hp + item.hp > 100) {
-        if (player.hp < 100) {
-          console.log(
-            `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${
-              ANSI.ltgreen
-            }${100 - player.hp}${ANSI.reset}hp`
-          );
-          player.hp = 100;
-          removeItem(item, 1);
+    if (checkInventory(item)) {
+      if (item.type == "food") {
+        if (player.hp + item.hp > 100) {
+          if (player.hp < 100) {
+            console.log(
+              `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${
+                ANSI.ltgreen
+              }${100 - player.hp}${ANSI.reset}hp`
+            );
+            player.hp = 100;
+            removeItem(item, 1);
+          } else {
+            console.log(
+              `${ANSI.ltgrey}you are too full to consume the ${ANSI.green}${item.name}${ANSI.reset}`
+            );
+          }
         } else {
           console.log(
-            `${ANSI.ltgrey}you are too full to consume the ${ANSI.green}${item.name}${ANSI.reset}`
+            `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${ANSI.ltgreen}${item.hp}${ANSI.reset}hp`
           );
+          player.hp += item.hp;
+          removeItem(item, 1);
         }
       } else {
         console.log(
-          `you ate ${ANSI.ltgreen}${item.name}${ANSI.reset}, you gained ${ANSI.ltgreen}${item.hp}${ANSI.reset}hp`
+          `${ANSI.ltgrey}you can't eat ${ANSI.ltgreen}${item.name}${ANSI.reset}`
         );
-        player.hp += item.hp;
-        removeItem(item, 1);
       }
     } else {
-      console.log(
-        `${ANSI.ltgrey}you can't eat ${ANSI.ltgreen}${item.name}${ANSI.reset}`
-      );
+      console.log(`${ANSI.ltgrey}what would you like to eat${ANSI.reset}`);
     }
-  } else {
-    console.log(`${ANSI.ltgrey}what would you like to eat${ANSI.reset}`);
   }
 }
 
