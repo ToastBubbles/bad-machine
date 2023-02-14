@@ -172,7 +172,7 @@ function checkForNPC(type) {
   if (player.location.atmos.npcs != undefined) {
     player.location.atmos.npcs.forEach((npc) => {
       let mappedNPC = npcs.find((x) => x.id == npc[0]);
-      console.log(mappedNPC);
+      // console.log(mappedNPC);
 
       if (mappedNPC.jobs.includes(type)) {
         canSell = true;
@@ -326,7 +326,7 @@ function checkInventory(item, inv = player.inventory) {
   }
 }
 async function addItem(item, inv = player.inventory, didBuy = false) {
-  console.log(inv);
+  // console.log(inv);
   let mappedItem = items.find((x) => x.id === item[0]);
   let isAdded = false;
   if (didBuy) {
