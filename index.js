@@ -1,4 +1,5 @@
 const { player } = require("./player");
+const { locations } = require("./locations");
 const { items } = require("./items");
 const { commands } = require("./commands");
 const { ANSI } = require("./config");
@@ -98,6 +99,24 @@ function openPrompt(line = ">> ") {
 
             if (item.name == multiWord) {
               thisActionItem = item;
+            }
+          }
+        }
+        for (let location of locations) {
+          if (location.name.toLowerCase() == word) {
+            thisActionItem = location;
+          }
+          if (thisActionItem == null && index < iArr.length - 1) {
+            // console.log("checking two word items");
+            let multiWord = `${word} ${iArr[index + 1]}`;
+
+            if (location.name == multiWord) {
+              thisActionItem = location;
+            } else {
+              multiWord += ` ${iArr[index + 2]}`;
+              if (location.name == multiWord) {
+                thisActionItem = location;
+              }
             }
           }
         }

@@ -18,6 +18,13 @@ let commands = [
     f: help,
   },
   {
+    text: ["$go"],
+    desc: "",
+    type: "action",
+    hidden: true,
+    f: adminTravel,
+  },
+  {
     text: ["stats"],
     desc: "print player stats",
     type: "action",
@@ -131,6 +138,14 @@ let commands = [
   },
 ];
 
+async function adminTravel(loc) {
+  // console.log(loc);
+  if (loc) {
+    console.log(`${ANSI.ltmagenta}going to ${loc.name}${ANSI.reset}`);
+    player.location = loc;
+  }
+}
+
 async function help() {
   console.log("commands:");
   for (let command of commands) {
@@ -157,6 +172,7 @@ function checkForNPC(type) {
   if (player.location.atmos.npcs != undefined) {
     player.location.atmos.npcs.forEach((npc) => {
       let mappedNPC = npcs.find((x) => x.id == npc[0]);
+      console.log(mappedNPC);
 
       if (mappedNPC.jobs.includes(type)) {
         canSell = true;
@@ -310,6 +326,7 @@ function checkInventory(item, inv = player.inventory) {
   }
 }
 async function addItem(item, inv = player.inventory, didBuy = false) {
+  console.log(inv);
   let mappedItem = items.find((x) => x.id === item[0]);
   let isAdded = false;
   if (didBuy) {

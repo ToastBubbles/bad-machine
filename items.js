@@ -107,6 +107,30 @@ const items = [
     // subtype: "boots",
     damage: -15,
   },
+  {
+    id: 14,
+    name: "mead",
+    value: 9,
+    type: "food",
+    hp: 4,
+    desc: "",
+  },
+  {
+    id: 15,
+    name: "mead",
+    value: 9,
+    type: "food",
+    hp: 4,
+    desc: "",
+  },
+  {
+    id: 16,
+    name: "grilled leafrot stew",
+    value: 17,
+    type: "food",
+    hp: 23,
+    desc: "",
+  },
 ];
 
 exports.items = items;

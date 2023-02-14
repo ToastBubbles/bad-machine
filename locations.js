@@ -79,7 +79,7 @@ let locations = [
   },
   {
     name: "Invinhall",
-    desc: "There is a shop to the northeast",
+    desc: "you are in the lovely town of Invinhall, you are standing in the middle of a wide cobble road that is lined with cream-colored houses with dark chocolate wooden framework, there are birch trees scattered about with lovely amber leaves. to get to the market district, go due north",
     coords: [3, 2],
     type: "outdoor",
     atmos: {
@@ -88,13 +88,45 @@ let locations = [
     containers: [],
   },
   {
-    name: "Invinhall shopkeep",
-    desc: "buy and sell here",
+    name: "Invinhall Market Street",
+    desc: "There is a shop to the northeast",
+    coords: [3, 3],
+    type: "outdoor",
+    atmos: {
+      type: "safe",
+    },
+    containers: [],
+  },
+  {
+    name: "Invinhall general shopkeep",
+    desc: "buy and sell here!",
     coords: [4, 3],
     type: "indoor",
     atmos: {
       type: "safe",
       npcs: [[100, 1]],
+    },
+    containers: [],
+  },
+  {
+    name: "Invinhall alchemy shop",
+    desc: "buy and sell here!",
+    coords: [2, 3],
+    type: "indoor",
+    atmos: {
+      type: "safe",
+      npcs: [[101, 1]],
+    },
+    containers: [],
+  },
+  {
+    name: "Invinhall blacksmith",
+    desc: "buy and sell here!",
+    coords: [3, 4],
+    type: "indoor",
+    atmos: {
+      type: "safe",
+      npcs: [[102, 1]],
     },
     containers: [],
   },
