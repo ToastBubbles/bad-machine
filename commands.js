@@ -143,6 +143,7 @@ async function adminTravel(loc) {
   if (loc) {
     console.log(`${ANSI.ltmagenta}going to ${loc.name}${ANSI.reset}`);
     player.location = loc;
+    player.engaged = [];
   }
 }
 
@@ -258,10 +259,10 @@ async function printInv(inv = player.inventory) {
 
   console.log(
     `
-  ┌───────────────────────────────────────┬──────────┬──────────┐
+  ╭───────────────────────────────────────┬──────────┬──────────╮
   │      Item:                            │  Qty:    │  Price:  │
   ├───────────────────────────────────────┼──────────┼──────────┤${lines}
-  └───────────────────────────────────────┴──────────┴──────────┘
+  ╰───────────────────────────────────────┴──────────┴──────────╯
 `
   );
 }
@@ -300,12 +301,12 @@ async function printStats() {
   w = centerText(w, 19);
 
   console.log(`
-  ┌───────────────────┬─────────────────────────────────────────┐
+  ╭───────────────────┬─────────────────────────────────────────╮
   │  Current Weapon:  │                 HP: ${ANSI.ltgreen}${hp}${ANSI.reset}│
   │${ANSI.green}${w}${ANSI.reset}│${def}│
   │${ANSI.yellow}${dmg}${ANSI.reset}│${lvl}│
   │                   │${coins}│
-  └───────────────────┴─────────────────────────────────────────┘
+  ╰───────────────────┴─────────────────────────────────────────╯
   
   `);
 }
@@ -552,7 +553,7 @@ async function attack(id) {
   if (id > -1) {
     let curEnemy = enemies.find((x) => x.id === id);
     console.log(`you attacked ${ANSI.red}${curEnemy.name}${ANSI.reset}`);
-    await delay(1500).then(() => {
+    await delay(15).then(() => {
       console.log(
         `you dealt ${ANSI.ltyellow}${player.damage}${ANSI.reset} damage`
       );
@@ -560,7 +561,7 @@ async function attack(id) {
     });
 
     if (dealtDamage >= curEnemy.hp) {
-      await delay(1500).then(() => {
+      await delay(15).then(() => {
         console.log(
           `${ANSI.ltgreen}you defeated the ${ANSI.red}${curEnemy.name}${ANSI.reset}`
         );
@@ -621,8 +622,14 @@ async function enemyAttack(enemy) {
     }
   });
   if (attacked) {
-    let calcDamage = thisAttack.damage - Math.round(player.defense / 5);
-    await delay(1500).then(() => {
+    // let calcDamage = thisAttack.damage - Math.round(player.defense / 5);
+    let calcDamage =
+      thisAttack.damage -
+      Math.round(((player.defense / 100) * thisAttack.damage) / 4);
+    if (calcDamage < 0) {
+      calcDamage = 0;
+    }
+    await delay(15).then(() => {
       player.hp -= calcDamage;
 
       console.log(
@@ -630,7 +637,7 @@ async function enemyAttack(enemy) {
       );
     });
 
-    await delay(1500).then(() => {
+    await delay(15).then(() => {
       if (player.hp < 0) {
         console.log(
           `you recieved ${ANSI.red}${calcDamage}${ANSI.reset} damage, your health is ${ANSI.ltred}0${ANSI.reset}`
