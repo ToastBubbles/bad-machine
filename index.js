@@ -12,12 +12,13 @@ const fs = require("fs");
  * factor in defense into combat
  *
  */
+function checkForSave() {
+  return fs.existsSync("save.json");
+}
 function load() {
+  // console.log("you can load");
   let rawdata = fs.readFileSync("save.json");
   let playerSave = JSON.parse(rawdata);
-  // console.log(playerSave);
-  // player = playerSave;
-
   player.hp = playerSave.hp;
   player.level = playerSave.level;
   player.equippedWeapon = playerSave.equippedWeapon;
@@ -28,6 +29,10 @@ function load() {
   player.location = playerSave.location;
   player.engaged = playerSave.engaged;
   player.inventory = playerSave.inventory;
+  //file exists
+
+  // console.log(playerSave);
+  // player = playerSave;
 }
 
 // function save() {
@@ -198,7 +203,7 @@ function openPrompt(line = ">> ") {
 
 function promptUser(q) {
   readline.question(q, (input) => {
-    if (input.toUpperCase() === "Y") {
+    if (input.toUpperCase() === "N") {
       console.log("Starting New Game...");
       setTimeout(() => {
         console.log(printSpecial("line-single"));
@@ -208,17 +213,25 @@ function promptUser(q) {
       }, 700);
 
       //   readline.close();
-    } else {
-      console.log("Loading Game...");
-      load();
-      setTimeout(() => {
-        console.log(printSpecial("line-single"));
+    } else if (input.toUpperCase() === "L") {
+      if (checkForSave()) {
+        console.log("Loading Game...");
+        load();
+        setTimeout(() => {
+          console.log(printSpecial("line-single"));
 
-        describeLocation(player.location);
-        openPrompt();
-      }, 700);
+          describeLocation(player.location);
+          openPrompt();
+        }, 700);
+      } else {
+        console.log(`${ANSI.ltgrey}no save file found...${ANSI.reset}`);
+        promptUser(q);
+      }
+    } else {
+      console.log(`${ANSI.ltgrey}not a valid response...${ANSI.reset}`);
+      promptUser(q);
     }
   });
 }
 start();
-promptUser(`${ANSI.ltyellow}New game? Y/N ${ANSI.reset}`);
+promptUser(`${ANSI.ltyellow}N - New game\nL - Load Game\n${ANSI.reset}`);
