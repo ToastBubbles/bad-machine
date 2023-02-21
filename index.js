@@ -3,6 +3,7 @@ const { locations } = require("./locations");
 const { items } = require("./items");
 const { commands } = require("./commands");
 const { ANSI } = require("./config");
+const fs = require("fs");
 /**
  * TODO:
  *
@@ -11,6 +12,35 @@ const { ANSI } = require("./config");
  * factor in defense into combat
  *
  */
+function load() {
+  let rawdata = fs.readFileSync("save.json");
+  let playerSave = JSON.parse(rawdata);
+  // console.log(playerSave);
+  // player = playerSave;
+
+  player.hp = playerSave.hp;
+  player.level = playerSave.level;
+  player.equippedWeapon = playerSave.equippedWeapon;
+  player.defense = playerSave.defense;
+  player.coins = playerSave.coins;
+  player.armor = playerSave.armor;
+  player.damage = playerSave.damage;
+  player.location = playerSave.location;
+  player.engaged = playerSave.engaged;
+  player.inventory = playerSave.inventory;
+}
+
+// function save() {
+//   // fs.writeFile("save.json", content, (err) => {
+//   //   if (err) {
+//   //     console.error(err);
+//   //   }
+//   //   // file written successfully
+//   // });
+//   let data = JSON.stringify(player);
+//   fs.writeFileSync("save.json", data);
+// }
+
 const cardDirections = [
   "north",
   "northwest",
@@ -179,7 +209,14 @@ function promptUser(q) {
 
       //   readline.close();
     } else {
-      openPrompt();
+      console.log("Loading Game...");
+      load();
+      setTimeout(() => {
+        console.log(printSpecial("line-single"));
+
+        describeLocation(player.location);
+        openPrompt();
+      }, 700);
     }
   });
 }

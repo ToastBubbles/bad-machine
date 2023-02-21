@@ -4,7 +4,8 @@ const { locations } = require("./locations");
 const { enemies } = require("./enemies");
 const { ANSI } = require("./config");
 const { npcs } = require("./npcs");
-const { it } = require("node:test");
+// const { it } = require("node:test");
+const fs = require("fs");
 // const { resolve } = require("path");
 // let dead = false;
 // const { randomBytes } = require("crypto");
@@ -23,6 +24,13 @@ let commands = [
     type: "action",
     hidden: true,
     f: adminTravel,
+  },
+  {
+    text: ["save"],
+    desc: "save game",
+    type: "action",
+    hidden: false,
+    f: save,
   },
   {
     text: ["stats"],
@@ -158,6 +166,14 @@ async function help() {
       );
     }
   }
+}
+
+async function save() {
+  let data = JSON.stringify(player);
+  await fs.writeFileSync("save.json", data);
+  await delay(1500).then(() => {
+    console.log("saved!");
+  });
 }
 ///////////////////////////////////////////
 async function describeLoc(item = player.location) {
@@ -553,7 +569,7 @@ async function attack(id) {
   if (id > -1) {
     let curEnemy = enemies.find((x) => x.id === id);
     console.log(`you attacked ${ANSI.red}${curEnemy.name}${ANSI.reset}`);
-    await delay(15).then(() => {
+    await delay(1500).then(() => {
       console.log(
         `you dealt ${ANSI.ltyellow}${player.damage}${ANSI.reset} damage`
       );
@@ -561,7 +577,7 @@ async function attack(id) {
     });
 
     if (dealtDamage >= curEnemy.hp) {
-      await delay(15).then(() => {
+      await delay(1500).then(() => {
         console.log(
           `${ANSI.ltgreen}you defeated the ${ANSI.red}${curEnemy.name}${ANSI.reset}`
         );
@@ -629,7 +645,7 @@ async function enemyAttack(enemy) {
     if (calcDamage < 0) {
       calcDamage = 0;
     }
-    await delay(15).then(() => {
+    await delay(1500).then(() => {
       player.hp -= calcDamage;
 
       console.log(
@@ -637,7 +653,7 @@ async function enemyAttack(enemy) {
       );
     });
 
-    await delay(15).then(() => {
+    await delay(1500).then(() => {
       if (player.hp < 0) {
         console.log(
           `you recieved ${ANSI.red}${calcDamage}${ANSI.reset} damage, your health is ${ANSI.ltred}0${ANSI.reset}`
